@@ -36,18 +36,17 @@ git push -u origin main
 2. **APIs & Services → Library → "YouTube Data API v3" → Enable.**
 3. **OAuth consent screen**: User type *External*, uygulama adı ver, kendi e-postanı ekle.
    Sonra **Publishing status → "In production"** yap. (*Testing* modunda kalırsa izin 7 günde bir düşer ve yüklemeler durur. Doğrulanmamış uygulama uyarısı çıkar; kendi hesabın için "Devam et" demen yeterli.)
-4. **Credentials → Create credentials → OAuth client ID → Application type: Desktop app** → JSON'u indir, `client_secret.json` olarak bu klasöre koy.
-5. Kendi bilgisayarında:
+4. **Credentials → Create credentials → OAuth client ID**
+   - Application type: **Web application**
+   - Authorized redirect URIs → **Add URI** → `https://developers.google.com/oauthplayground`
+   - **Create** → çıkan **Client ID** ve **Client secret**'ı bir kenara kopyala.
+5. <https://developers.google.com/oauthplayground> adresini aç (bilgisayara hiçbir şey kurmak gerekmez):
+   - Sağ üstteki **⚙️ dişli** → **Use your own OAuth credentials** kutusunu işaretle → Client ID ve Client secret'ı yapıştır.
+   - Soldaki kutuya `https://www.googleapis.com/auth/youtube.upload` yaz → **Authorize APIs**.
+   - **@morpheunn kanalının bağlı olduğu Google hesabını** seç → "Google bu uygulamayı doğrulamadı" çıkarsa **Gelişmiş → Devam et** → İzin ver.
+   - **Exchange authorization code for tokens** düğmesine bas → çıkan **Refresh token**'ı kopyala.
 
-```bash
-pip install google-auth-oauthlib
-```
-
-```bash
-python get_refresh_token.py client_secret.json
-```
-
-   Açılan tarayıcıda **@morpheunn kanalının bağlı olduğu Google hesabıyla** giriş yap ve izin ver. Ekrana 3 değer yazılır.
+   (Alternatif: Python biliyorsan *Desktop app* türünde istemci oluşturup `python get_refresh_token.py client_secret.json` da çalıştırabilirsin.)
 
 ### 5) GitHub Secrets
 Depo → **Settings → Secrets and variables → Actions → New repository secret**:
@@ -56,9 +55,9 @@ Depo → **Settings → Secrets and variables → Actions → New repository sec
 |---|---|
 | `ANTHROPIC_API_KEY` | 2. adımdaki anahtar |
 | `POLLINATIONS_API_KEY` | 3. adımdaki anahtar |
-| `YT_CLIENT_ID` | get_refresh_token.py çıktısı |
-| `YT_CLIENT_SECRET` | get_refresh_token.py çıktısı |
-| `YT_REFRESH_TOKEN` | get_refresh_token.py çıktısı |
+| `YT_CLIENT_ID` | 4. adımdaki Client ID |
+| `YT_CLIENT_SECRET` | 4. adımdaki Client secret |
+| `YT_REFRESH_TOKEN` | 5. adımdaki Refresh token |
 
 ### 6) İlk deneme
 Depo → **Actions → Otomatik Shorts → Run workflow**. "YouTube'a yüklensin mi?" kutusunu kaldırırsan sadece video üretir; videoyu çalışma sayfasının altındaki **Artifacts**'tan indirip kontrol edebilirsin. Beğenirsen kutu işaretli tekrar çalıştır. Bundan sonra günde 2 kez kendisi çalışır.
