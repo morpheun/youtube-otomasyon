@@ -1,0 +1,40 @@
+{
+  "language": "Türkçe",
+  "genre": "hikaye animasyon",
+  "story_themes": [
+    "masal ve fabl (hayvan karakterler, sonunda bir ders)",
+    "gizemli / ürkütücü ama aile dostu kısa hikaye",
+    "duygusal, ters köşe sonlu hikaye",
+    "Anadolu efsaneleri ve halk hikayeleri",
+    "fantastik macera",
+    "bilim kurgu kısa hikaye",
+    "komik, absürt kısa hikaye"
+  ],
+  "art_styles": [
+    "3D animated movie still, Pixar-like stylized characters, soft cinematic lighting, vibrant colors",
+    "Studio Ghibli inspired hand-painted anime illustration, warm soft colors, detailed background",
+    "storybook watercolor illustration, whimsical, soft textures",
+    "dark fairytale digital painting, moody cinematic lighting, rich colors"
+  ],
+  "target_seconds": 45,
+  "scene_count": 7,
+
+  "claude_model": "claude-opus-5-5",
+
+  "tts_voice": "tr-TR-AhmetNeural",
+  "tts_rate": "+8%",
+
+  "image_provider": "pollinations",
+  "pollinations_model": "flux",
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+
+  "music_volume": 0.12,
+  "subtitle_font": "DejaVu Sans",
+  "subtitle_words_per_line": 3,
+
+  "youtube_privacy": "public",
+  "youtube_category_id": "1",
+  "default_tags": ["hikaye", "animasyon", "masal", "shorts", "kısa hikaye"]
+}

@@ -1,0 +1,68 @@
+name: Otomatik Shorts
+
+on:
+  schedule:
+    # GitHub saatleri UTC'dir. Türkiye = UTC+3
+    - cron: "17 7 * * *"    # her gün 10:17 (TR)
+    - cron: "23 16 * * *"   # her gün 19:23 (TR)
+  workflow_dispatch:        # Actions sekmesinden elle çalıştırma
+    inputs:
+      upload:
+        description: "YouTube'a yüklensin mi?"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write   # data/history.json'u geri kaydetmek için
+
+concurrency:
+  group: shorts
+  cancel-in-progress: false
+
+jobs:
+  make-and-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Sistem paketleri
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+
+      - name: Python paketleri
+        run: pip install -r requirements.txt
+
+      - name: Video üret ve yükle
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.upload }}" != "true" ]; then
+            python main.py --no-upload
+          else
+            python main.py
+          fi
+
+      - name: Videoyu indirilebilir sakla (7 gün)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: shorts-${{ github.run_id }}
+          path: output/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Geçmişi kaydet (aynı hikaye tekrar yazılmasın)
+        run: |
+          git config user.name "shorts-bot"
+          git config user.email "shorts-bot@users.noreply.github.com"
+          git add data/history.json
+          git diff --cached --quiet || (git commit -m "Yeni Shorts kaydı [skip ci]" && git push)
