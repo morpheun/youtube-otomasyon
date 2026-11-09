@@ -155,6 +155,36 @@ tr.me td{color:var(--gold);font-weight:800}
 #mintro small{display:block;font:700 16px var(--body);letter-spacing:.02em;text-transform:none;color:#dfe9e4}
 #mhint{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 110px);text-align:center;font:700 16px var(--body);color:#fff;text-shadow:0 2px 6px #000;pointer-events:none;padding-inline:16px}
 #mpanel{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:min(calc(100% - 32px),420px);display:flex;flex-direction:column;gap:10px}
+.seg{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.seg button{flex:none;border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:9px 13px;font:800 15px var(--display);letter-spacing:.05em;text-transform:uppercase}
+.seg button.on{border-color:var(--gold);color:var(--gold);background:#2a2412}
+.shopcard{display:grid;grid-template-columns:58px 1fr;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:12px}
+.shopcard .ic{width:58px;height:58px;border-radius:14px;display:grid;place-items:center;font-size:30px;background:#0b1411;border:1px solid var(--line)}
+.shopcard .bd{display:flex;flex-direction:column;gap:6px;min-width:0}
+.shopcard .bd b{font:800 19px/1.05 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.shopcard .bd p{font-size:13px}
+.shopcard .acts{grid-column:1/-1;display:flex;gap:8px}
+.shopcard .acts .btn{padding:11px 10px;font-size:16px}
+.shopcard.myst{border-color:#7a5cff66;background:linear-gradient(135deg,#1a1430,#101a17)}
+.shopcard.owned{opacity:.75}
+.tagx{display:inline-block;font:800 11px var(--display);letter-spacing:.12em;padding:3px 7px;border-radius:6px;background:#2a2412;color:var(--gold);text-transform:uppercase}
+.tagx.m{background:#2a1f4a;color:#c9b8ff}
+.boxfx{width:150px;height:150px;margin:6px auto;border-radius:26px;display:grid;place-items:center;font-size:72px;animation:shake .9s ease-in-out;box-shadow:0 0 60px var(--glow,#f2c14e88)}
+@keyframes shake{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg) scale(1.05)}40%{transform:rotate(8deg) scale(1.08)}60%{transform:rotate(-6deg) scale(1.1)}80%{transform:rotate(4deg) scale(1.12)}}
+.reveal{animation:pop .5s ease-out;text-align:center;display:flex;flex-direction:column;gap:6px}
+.reveal b{font:800 30px var(--display);color:var(--gold);letter-spacing:.04em}
+.dlg{display:flex;flex-direction:column;gap:10px}
+.dlg .ln{display:flex;gap:10px;align-items:flex-start}
+.dlg .ln .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 14px var(--display);color:#0a110f;flex:none}
+.dlg .ln div{min-width:0}
+.dlg .ln b{display:block;font:800 14px var(--display);letter-spacing:.06em;text-transform:uppercase}
+.dlg .ln span{color:var(--ink);line-height:1.45}
+.dlg .nar{color:#c8d6cf;font-style:italic;line-height:1.5;padding-left:2px}
+.chapter{display:flex;flex-direction:column;gap:4px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.chapter small{font:800 12px var(--display);letter-spacing:.14em;color:var(--gold);text-transform:uppercase}
+.chapter b{font:800 20px var(--display);text-transform:uppercase;letter-spacing:.03em}
+.chapter span{font-size:13px;color:var(--muted)}
+.ending{font:800 40px/1 var(--display);text-transform:uppercase;color:var(--gold);text-align:center;text-shadow:0 3px 0 #6a4a10}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -163,7 +193,7 @@ tr.me td{color:var(--gold);font-weight:800}
     <div style="height:6vh"></div>
     <span class="eyebrow">27 Studios</span>
     <h1>Yıldız<br>Yolu</h1>
-    <p>17 yaşında, kimsenin tanımadığı bir genç olarak başla. Sahada kritik anları sen oyna, kararlarını sen ver, kulübünü sen seç. Yolun sonu Altın Top mu, yoksa unutulmak mı?</p>
+    <p>16 yaşında, kimsenin tanımadığı bir genç olarak başla. Sahada kritik anları sen oyna, kararlarını sen ver, kulübünü sen seç. Yolun sonu Altın Top mu, yoksa unutulmak mı?</p>
     <div class="cardwrap"><canvas id="cardStart" class="bigcard" width="440" height="616"></canvas></div>
     <button class="btn" id="bContinue" hidden>Kariyere Devam</button>
     <button class="btn ghost" id="bNew">Yeni Kariyer</button>
@@ -207,13 +237,14 @@ tr.me td{color:var(--gold);font-weight:800}
     <div class="match">
       <div style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" id="hWeek"></span><div class="form" id="hForm"></div></div>
       <div class="vsrow"><div class="team"><canvas id="crA" width="116" height="134"></canvas><b id="nmA"></b><small id="psA"></small></div><div class="vs">VS</div><div class="team"><canvas id="crB" width="116" height="134"></canvas><b id="nmB"></b><small id="psB"></small></div></div>
-      <button class="btn" id="bPlay">Maça Çık <small>⚡1</small></button>
+      <div class="row"><button class="btn" id="bPlay">Maça Çık <small>⚡1</small></button><button class="btn ghost" id="bSim" style="flex:.62">Simüle Et</button></div>
+      <p style="font-size:12px;text-align:center">Simülasyonda sonuç otomatik hesaplanır, %30 daha az XP kazanılır.</p>
     </div>
     <div class="grid2">
       <button class="tile" data-go="table"><b>Puan Durumu</b><div class="mini" id="miniTable"></div></button>
       <button class="tile" data-go="career"><b>Kariyer</b><span id="carSub">İstatistikler, kupalar</span></button>
-      <button class="tile" data-go="settings"><b>Ayarlar</b><span>Ses, takım düzenleyici</span></button>
-      <button class="tile" data-go="shop"><b>Bedava Altın</b><span>Reklam izle, altın kazan</span></button>
+      <button class="tile" data-go="news"><b>Haberler</b><span id="newsSub">Hakkında konuşulanlar</span></button>
+      <button class="tile" data-go="settings"><b>Ayarlar</b><span>Ses, takım isimleri</span></button>
     </div>
   </section>
 
@@ -230,7 +261,7 @@ tr.me td{color:var(--gold);font-weight:800}
   </section>
 
   <section class="screen" id="s-news" hidden>
-    <div class="top"><h2>Son Dakika</h2></div>
+    <div class="top"><button class="back" data-go="hub" aria-label="Geri">‹</button><h2>Son Dakika</h2></div>
     <div id="newsList" class="screen" style="gap:10px"></div>
   </section>
 
@@ -241,6 +272,7 @@ tr.me td{color:var(--gold);font-weight:800}
 
   <section class="screen" id="s-shop" hidden>
     <div class="top"><h2>Mağaza</h2><div class="res"><span><i class="coin"></i><b id="sCoins">0</b></span></div></div>
+    <div class="seg" id="shopSeg"><button data-seg="kutu">Kutular</button><button data-seg="yetenek">Yetenekler</button><button data-seg="yasam">Yaşam</button><button data-seg="takviye">Takviye</button></div>
     <div id="shopList" class="screen" style="gap:10px"></div>
   </section>
 
@@ -251,10 +283,31 @@ tr.me td{color:var(--gold);font-weight:800}
     <div class="panel" style="padding:6px 10px;overflow-x:auto"><table><thead><tr><th>Sezon</th><th>Kulüp</th><th>Maç</th><th>Gol</th><th>Ort.</th><th>Sıra</th></tr></thead><tbody id="carBody"></tbody></table></div>
   </section>
 
+  <section class="screen" id="s-story" hidden>
+    <div class="top"><button class="back" id="storyBack" data-go="end" aria-label="Geri" hidden>‹</button><h2>Hikâye</h2></div>
+    <p id="storyIntro"></p>
+    <div id="storyList" class="screen" style="gap:10px"></div>
+  </section>
+
+  <section class="screen" id="s-end" hidden>
+    <span class="eyebrow">Kariyer sona erdi</span>
+    <div class="cardwrap"><canvas id="cardEnd" class="bigcard" width="440" height="616"></canvas></div>
+    <div class="ending" id="endTitle"></div>
+    <div class="panel"><p id="endText" style="color:var(--ink)"></p></div>
+    <div class="panel"><dl class="kv" id="endKv"></dl></div>
+    <button class="btn ghost" id="endStory">Hikâyeyi Baştan Oku</button>
+    <button class="btn" id="endNew">Yeni Kariyer</button>
+  </section>
+
   <section class="screen" id="s-settings" hidden>
     <div class="top"><button class="back" id="setBack" aria-label="Geri">‹</button><h2>Ayarlar</h2></div>
     <div class="panel" style="display:flex;flex-direction:column;gap:10px">
       <h3>Ses</h3><div class="chips"><button class="chip" id="sndOn">Açık</button><button class="chip" id="sndOff">Kapalı</button></div>
+    </div>
+    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <h3>Takım İsimleri</h3>
+      <div class="chips"><button class="chip" id="nmReal">Gerçek isimler</button><button class="chip" id="nmSafe">Yayın için güvenli</button></div>
+      <p>Gerçek kulüp adları tescilli markadır. Oyunu mağazaya ya da reklamlı bir siteye koymadan önce "Yayın için güvenli" seçeneğine geç.</p>
     </div>
     <div class="panel" style="display:flex;flex-direction:column;gap:10px">
       <h3>Takım Düzenleyici</h3>
@@ -276,10 +329,10 @@ tr.me td{color:var(--gold);font-weight:800}
 
 <div id="tabs" hidden><nav>
   <button data-tab="hub"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Ana Sayfa</button>
+  <button data-tab="story"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7"/></svg>Hikâye<i class="dot" id="stDot" hidden></i></button>
   <button data-tab="growth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Gelişim</button>
-  <button data-tab="transfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg>Transfer<i class="dot" id="trDot" hidden></i></button>
-  <button data-tab="news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h10M7 17h6"/></svg>Haberler</button>
   <button data-tab="shop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Mağaza</button>
+  <button data-tab="transfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg>Transfer<i class="dot" id="trDot" hidden></i></button>
 </nav></div>
 
 <div id="match" hidden>
@@ -298,6 +351,7 @@ tr.me td{color:var(--gold);font-weight:800}
 </div>
 
 <div class="modal" id="modal" hidden><div class="mcard" id="mbody"></div></div>
+<div class="modal" id="adM" hidden style="z-index:70"><div class="mcard" id="adBody"></div></div>
 <div id="toast" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
@@ -329,19 +383,21 @@ const NATIONS = [
   { id: 'IT', name: 'İtalya', f: ['#009246', '#fff', '#ce2b37'] }, { id: 'ES', name: 'İspanya', f: ['#aa151b', '#f1bf00', '#aa151b'], h: true },
   { id: 'GB', name: 'İngiltere', f: ['#fff', '#fff', '#fff'], eng: true },
 ];
-// Kulüp adları tescilli marka olduğu için şehir + gerçek renkler kullanılır; Ayarlar > Takım Düzenleyici'den değiştirilebilir.
-const T = (name, short, str, c1, c2) => ({ name, short, str, c1, c2 });
+// Varsayılan: gerçek kulüp adları. Ayarlar > Takım İsimleri'nden mağaza/reklam yayını için "güvenli isimler"e (şehir + renk) tek dokunuşla geçilir.
+const T = (real, rs, str, c1, c2, safe, ss) => ({ real, rs, str, c10: c1, c20: c2, safe, ss });
 const LEAGUES = [
-  { id: 'tr', name: 'Türkiye Ligi', teams: [T('İstanbul Sarı-Kırmızı', 'ISK', 84, '#a90432', '#fdb912'), T('İstanbul Sarı-Lacivert', 'ISL', 83, '#163962', '#ffed00'), T('İstanbul Siyah-Beyaz', 'ISB', 79, '#ffffff', '#111111'), T('Trabzon Bordo-Mavi', 'TBM', 76, '#7b1f35', '#75aadb'), T('İstanbul Turuncu-Lacivert', 'ITL', 73, '#f37021', '#0e2f56'), T('Samsun Kırmızı-Beyaz', 'SKB', 70, '#d71920', '#ffffff'), T('Konya Yeşil-Beyaz', 'KYB', 67, '#00843d', '#ffffff'), T('İzmir Sarı-Kırmızı', 'IZM', 64, '#fdd700', '#c8102e')] },
-  { id: 'en', name: 'İngiltere Ligi', teams: [T('Manchester Mavi', 'MCM', 91, '#6cabdd', '#1c2c5b'), T('Liverpool Kırmızı', 'LVK', 89, '#c8102e', '#f6eb61'), T('Londra Kırmızı-Beyaz', 'LKB', 88, '#ef0107', '#ffffff'), T('Manchester Kırmızı', 'MCK', 84, '#da291c', '#111111'), T('Londra Mavi', 'LDM', 83, '#034694', '#ffffff'), T('Kuzey Londra Beyaz', 'KLB', 80, '#ffffff', '#132257'), T('Newcastle Siyah-Beyaz', 'NSB', 79, '#241f20', '#ffffff'), T('Birmingham Bordo', 'BRB', 78, '#670e36', '#95bfe5')] },
-  { id: 'es', name: 'İspanya Ligi', teams: [T('Madrid Beyaz', 'MDB', 92, '#ffffff', '#febe10'), T('Barselona Mavi-Bordo', 'BMB', 90, '#a50044', '#004d98'), T('Madrid Kırmızı-Beyaz', 'MKB', 86, '#cb3524', '#ffffff'), T('Bask Kırmızı-Beyaz', 'BKB', 80, '#ee2523', '#ffffff'), T('Castellón Sarı', 'CSS', 79, '#ffe667', '#005187'), T('San Sebastian Mavi-Beyaz', 'SSM', 78, '#0067b1', '#ffffff'), T('Sevilla Beyaz', 'SVB', 78, '#ffffff', '#d4000f'), T('Valensiya Beyaz-Siyah', 'VBS', 76, '#f2f2f2', '#111111')] },
-  { id: 'de', name: 'Almanya Ligi', teams: [T('Münih Kırmızı', 'MÜK', 91, '#dc052d', '#ffffff'), T('Leverkusen Kırmızı-Siyah', 'LKS', 87, '#e32221', '#111111'), T('Dortmund Sarı-Siyah', 'DSS', 86, '#fde100', '#111111'), T('Leipzig Beyaz-Kırmızı', 'LBK', 83, '#ffffff', '#dd0741'), T('Stuttgart Beyaz', 'STB', 80, '#f5f5f5', '#e32219'), T('Frankfurt Siyah-Kırmızı', 'FSK', 79, '#111111', '#e1000f'), T('Wolfsburg Yeşil', 'WBY', 75, '#65b32e', '#ffffff'), T('Gelsenkirchen Mavi', 'GKM', 72, '#004d9d', '#ffffff')] },
-  { id: 'it', name: 'İtalya Ligi', teams: [T('Milano Mavi-Siyah', 'MMS', 89, '#0068a8', '#111111'), T('Napoli Mavi', 'NPM', 86, '#12a0d7', '#ffffff'), T('Torino Siyah-Beyaz', 'TSB', 86, '#111111', '#ffffff'), T('Milano Kırmızı-Siyah', 'MKS', 85, '#fb090b', '#111111'), T('Bergamo Mavi-Siyah', 'BMS', 84, '#1e71b8', '#111111'), T('Roma Sarı-Kırmızı', 'RSK', 82, '#8e1f2f', '#f0bc42'), T('Roma Gök Mavi', 'RGM', 80, '#87d8f7', '#ffffff'), T('Floransa Mor', 'FLM', 78, '#482e92', '#ffffff')] },
+  { id: 'tr', name: 'Türkiye Ligi', teams: [T('Galatasaray', 'GS', 84, '#a90432', '#fdb912', 'İstanbul Sarı-Kırmızı', 'ISK'), T('Fenerbahçe', 'FB', 83, '#163962', '#ffed00', 'İstanbul Sarı-Lacivert', 'ISL'), T('Beşiktaş', 'BJK', 79, '#ffffff', '#111111', 'İstanbul Siyah-Beyaz', 'ISB'), T('Trabzonspor', 'TS', 76, '#7b1f35', '#75aadb', 'Trabzon Bordo-Mavi', 'TBM'), T('Başakşehir', 'İBFK', 73, '#f37021', '#0e2f56', 'İstanbul Turuncu-Lacivert', 'ITL'), T('Samsunspor', 'SAM', 70, '#d71920', '#ffffff', 'Samsun Kırmızı-Beyaz', 'SKB'), T('Konyaspor', 'KON', 67, '#00843d', '#ffffff', 'Konya Yeşil-Beyaz', 'KYB'), T('Göztepe', 'GÖZ', 64, '#fdd700', '#c8102e', 'İzmir Sarı-Kırmızı', 'IZM')] },
+  { id: 'en', name: 'İngiltere Ligi', teams: [T('Manchester City', 'MCI', 91, '#6cabdd', '#1c2c5b', 'Manchester Mavi', 'MCM'), T('Liverpool', 'LIV', 89, '#c8102e', '#f6eb61', 'Liverpool Kırmızı', 'LVK'), T('Arsenal', 'ARS', 88, '#ef0107', '#ffffff', 'Londra Kırmızı-Beyaz', 'LKB'), T('Manchester United', 'MUN', 84, '#da291c', '#111111', 'Manchester Kırmızı', 'MCK'), T('Chelsea', 'CHE', 83, '#034694', '#ffffff', 'Londra Mavi', 'LDM'), T('Tottenham', 'TOT', 80, '#ffffff', '#132257', 'Kuzey Londra Beyaz', 'KLB'), T('Newcastle United', 'NEW', 79, '#241f20', '#ffffff', 'Newcastle Siyah-Beyaz', 'NSB'), T('Aston Villa', 'AVL', 78, '#670e36', '#95bfe5', 'Birmingham Bordo', 'BRB')] },
+  { id: 'es', name: 'İspanya Ligi', teams: [T('Real Madrid', 'RMA', 92, '#ffffff', '#febe10', 'Madrid Beyaz', 'MDB'), T('Barcelona', 'BAR', 90, '#a50044', '#004d98', 'Barselona Mavi-Bordo', 'BMB'), T('Atlético Madrid', 'ATM', 86, '#cb3524', '#ffffff', 'Madrid Kırmızı-Beyaz', 'MKB'), T('Athletic Bilbao', 'ATH', 80, '#ee2523', '#ffffff', 'Bask Kırmızı-Beyaz', 'BKB'), T('Villarreal', 'VIL', 79, '#ffe667', '#005187', 'Castellón Sarı', 'CSS'), T('Real Sociedad', 'RSO', 78, '#0067b1', '#ffffff', 'San Sebastian Mavi-Beyaz', 'SSM'), T('Sevilla', 'SEV', 78, '#ffffff', '#d4000f', 'Sevilla Beyaz', 'SVB'), T('Valencia', 'VAL', 76, '#f2f2f2', '#111111', 'Valensiya Beyaz-Siyah', 'VBS')] },
+  { id: 'de', name: 'Almanya Ligi', teams: [T('Bayern München', 'FCB', 91, '#dc052d', '#ffffff', 'Münih Kırmızı', 'MÜK'), T('Bayer Leverkusen', 'B04', 87, '#e32221', '#111111', 'Leverkusen Kırmızı-Siyah', 'LKS'), T('Borussia Dortmund', 'BVB', 86, '#fde100', '#111111', 'Dortmund Sarı-Siyah', 'DSS'), T('RB Leipzig', 'RBL', 83, '#ffffff', '#dd0741', 'Leipzig Beyaz-Kırmızı', 'LBK'), T('VfB Stuttgart', 'VFB', 80, '#f5f5f5', '#e32219', 'Stuttgart Beyaz', 'STB'), T('Eintracht Frankfurt', 'SGE', 79, '#111111', '#e1000f', 'Frankfurt Siyah-Kırmızı', 'FSK'), T('VfL Wolfsburg', 'WOB', 75, '#65b32e', '#ffffff', 'Wolfsburg Yeşil', 'WBY'), T('Schalke 04', 'S04', 72, '#004d9d', '#ffffff', 'Gelsenkirchen Mavi', 'GKM')] },
+  { id: 'it', name: 'İtalya Ligi', teams: [T('Inter', 'INT', 89, '#0068a8', '#111111', 'Milano Mavi-Siyah', 'MMS'), T('Napoli', 'NAP', 86, '#12a0d7', '#ffffff', 'Napoli Mavi', 'NPM'), T('Juventus', 'JUV', 86, '#111111', '#ffffff', 'Torino Siyah-Beyaz', 'TSB'), T('Milan', 'MIL', 85, '#fb090b', '#111111', 'Milano Kırmızı-Siyah', 'MKS'), T('Atalanta', 'ATA', 84, '#1e71b8', '#111111', 'Bergamo Mavi-Siyah', 'BMS'), T('Roma', 'ROM', 82, '#8e1f2f', '#f0bc42', 'Roma Sarı-Kırmızı', 'RSK'), T('Lazio', 'LAZ', 80, '#87d8f7', '#ffffff', 'Roma Gök Mavi', 'RGM'), T('Fiorentina', 'FIO', 78, '#482e92', '#ffffff', 'Floransa Mor', 'FLM')] },
 ];
-const TEAMS = {}; const DEFAULTS = {};
-LEAGUES.forEach(L => L.teams.forEach((t, i) => { t.id = L.id + i; t.league = L.id; TEAMS[t.id] = t; DEFAULTS[t.id] = { name: t.name, short: t.short, c1: t.c1, c2: t.c2 }; }));
-const EDIT_KEY = 'yildizYolu.teams';
-function applyEdits() { let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} for (const id in TEAMS) Object.assign(TEAMS[id], DEFAULTS[id], e[id] || {}); }
+const TEAMS = {};
+LEAGUES.forEach(L => L.teams.forEach((t, i) => { t.id = L.id + i; t.league = L.id; TEAMS[t.id] = t; }));
+const EDIT_KEY = 'yildizYolu.teams', NAME_KEY = 'yildizYolu.names';
+let NAME_MODE = 'real'; try { NAME_MODE = localStorage.getItem(NAME_KEY) || 'real'; } catch (e) {}
+const baseOf = t => ({ name: NAME_MODE === 'safe' ? t.safe : t.real, short: NAME_MODE === 'safe' ? t.ss : t.rs, c1: t.c10, c2: t.c20 });
+function applyEdits() { let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} for (const id in TEAMS) Object.assign(TEAMS[id], baseOf(TEAMS[id]), e[id] || {}); }
 function saveEdit(id, patch) { let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} e[id] = Object.assign(e[id] || {}, patch); try { localStorage.setItem(EDIT_KEY, JSON.stringify(e)); } catch (er) {} Object.assign(TEAMS[id], patch); }
 applyEdits();
 const leagueOf = id => LEAGUES.find(L => L.id === id);
@@ -364,8 +420,12 @@ const P = () => S.player;
 function ovr(p = P()) { const w = POS[p.pos].w; let s = 0; for (const k in w) s += p.stats[k] * w[k]; return Math.round(s); }
 const value = p => 0.2 * Math.pow(1.13, ovr(p) - 50) * (p.age < 23 ? 1.3 : p.age > 29 ? 0.7 : 1);
 const xpCost = v => Math.round(25 + (v - 40) * 3.2);
-const ENERGY_MAX = 5, ENERGY_MS = 8 * 60 * 1000;
-function tickEnergy() { const p = P(); if (p.energy >= ENERGY_MAX) { p.energyTs = Date.now(); return; } const gained = Math.floor((Date.now() - p.energyTs) / ENERGY_MS); if (gained > 0) { p.energy = Math.min(ENERGY_MAX, p.energy + gained); p.energyTs += gained * ENERGY_MS; persist(); } }
+const has = k => !!(S && S.player && S.player.abil && S.player.abil[k]);
+const owns = k => !!(S && S.player && S.player.items && S.player.items[k]);
+const energyMax = () => 5 + (owns('villa') ? 1 : 0) + (owns('malikane') ? 1 : 0);
+const energyMs = () => 8 * 60 * 1000 * (owns('jet') ? 0.75 : 1);
+function tickEnergy() { const p = P(), mx = energyMax(), ms = energyMs(); if (p.energy >= mx) { p.energyTs = Date.now(); return; } const gained = Math.floor((Date.now() - p.energyTs) / ms); if (gained > 0) { p.energy = Math.min(mx, p.energy + gained); p.energyTs += gained * ms; persist(); } }
+const eur = n => (n < 0 ? '−' : '') + '€' + (Math.abs(n) >= 1e6 ? (Math.abs(n) / 1e6).toFixed(Math.abs(n) >= 1e7 ? 0 : 1).replace('.', ',') + ' Mn' : Math.abs(n) >= 1e3 ? Math.round(Math.abs(n) / 1e3) + ' B' : Math.round(Math.abs(n)));
 function news(acc, text) { S.news.unshift({ acc, text, ts: Date.now(), likes: ri(40, 400) + Math.round(P().followers / ri(20, 60)), rt: ri(5, 90) }); S.news = S.news.slice(0, 40); S.unread = (S.unread || 0) + 1; }
 
 // ================= ses =================
@@ -395,10 +455,11 @@ const Ads = {
   rewarded(reason) {
     return new Promise(res => {
       let n = 5;
-      openModal(`<span class="eyebrow">Reklam · Test</span><h3>${esc(reason)}</h3><div class="adbox"><span id="adTx">Burada ödüllü reklam oynayacak</span><b id="adN" style="font:800 40px var(--display);color:var(--ink)">5</b></div><button class="btn ad" id="adGet" disabled>Ödülü Al</button><button class="btn ghost" id="adSkip">Vazgeç</button>`);
+      const box = $('#adBody'); $('#adM').hidden = false; box.innerHTML = (`<span class="eyebrow">Reklam · Test</span><h3>${esc(reason)}</h3><div class="adbox"><span id="adTx">Burada ödüllü reklam oynayacak</span><b id="adN" style="font:800 40px var(--display);color:var(--ink)">5</b></div><button class="btn ad" id="adGet" disabled>Ödülü Al</button><button class="btn ghost" id="adSkip">Vazgeç</button>`);
+      const closeAd = () => { $('#adM').hidden = true; box.innerHTML = ''; };
       const iv = setInterval(() => { n--; const e = $('#adN'); if (e) e.textContent = n; if (n <= 0) { clearInterval(iv); $('#adGet').disabled = false; $('#adTx').textContent = 'Reklam bitti, ödülün hazır!'; } }, 1000);
-      $('#adGet').onclick = () => { clearInterval(iv); closeModal(); res(true); };
-      $('#adSkip').onclick = () => { clearInterval(iv); closeModal(); res(false); };
+      $('#adGet').onclick = () => { clearInterval(iv); closeAd(); res(true); };
+      $('#adSkip').onclick = () => { clearInterval(iv); closeAd(); res(false); };
     });
   }
 };
@@ -423,7 +484,7 @@ function crest(cv, t) {
   for (let i = 0; i < 5; i++) if (i % 2) { g.fillStyle = t.c2; g.fillRect(w * (0.08 + i * 0.168), 0, w * 0.168, h); }
   g.fillStyle = '#0006'; g.fillRect(0, h * 0.42, w, h * 0.3); g.restore();
   sh(); g.lineWidth = w * 0.05; g.strokeStyle = '#f2c14e'; g.stroke();
-  g.fillStyle = '#fff'; g.strokeStyle = '#000b'; g.lineWidth = w * 0.05; g.font = `800 ${w * 0.27}px "Saira Condensed",sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = '#fff'; g.strokeStyle = '#000b'; g.lineWidth = w * 0.05; g.font = `800 ${w * (t.short.length > 3 ? 0.21 : 0.27)}px "Saira Condensed",sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
   g.strokeText(t.short, w / 2, h * 0.57); g.fillText(t.short, w / 2, h * 0.57);
   g.fillStyle = '#f2c14e'; star(g, w / 2, h * 0.24, w * 0.07, w * 0.03, 5);
 }
@@ -476,16 +537,17 @@ function card(cv, p) {
 }
 
 // ================= ekranlar =================
-const screens = ['start', 'create', 'firstclub', 'hub', 'growth', 'transfer', 'news', 'table', 'shop', 'career', 'settings', 'editor'];
-const TABBED = ['hub', 'growth', 'transfer', 'news', 'shop', 'table', 'career'];
+const screens = ['start', 'create', 'firstclub', 'hub', 'growth', 'transfer', 'news', 'table', 'shop', 'career', 'settings', 'editor', 'story', 'end'];
+const TABBED = ['hub', 'growth', 'transfer', 'news', 'shop', 'table', 'career', 'story'];
 let current = 'start', prevScreen = 'start';
 function show(name) {
   if (name !== 'settings' && name !== 'editor') prevScreen = name === 'start' || !S ? 'start' : TABBED.includes(name) ? name : prevScreen;
+  if (S && S.ended && ['hub', 'growth', 'shop', 'transfer'].includes(name)) name = 'end';
   current = name; screens.forEach(s => $('#s-' + s).hidden = s !== name);
-  const tabbed = S && TABBED.includes(name); $('#tabs').hidden = !tabbed; $('#app').classList.toggle('notabs', !tabbed);
+  const tabbed = S && !S.ended && TABBED.includes(name); $('#tabs').hidden = !tabbed; $('#app').classList.toggle('notabs', !tabbed);
   document.querySelectorAll('#tabs [data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
   window.scrollTo(0, 0);
-  ({ hub: renderHub, growth: renderGrowth, transfer: renderTransfer, news: renderNews, table: renderTable, shop: renderShop, career: renderCareer, settings: renderSettings, editor: renderEditor }[name] || (() => {}))();
+  ({ hub: renderHub, growth: renderGrowth, transfer: renderTransfer, news: renderNews, table: renderTable, shop: renderShop, career: renderCareer, settings: renderSettings, editor: renderEditor, story: renderStory, end: renderEnd }[name] || (() => {}))();
 }
 document.addEventListener('click', e => { const b = e.target.closest('[data-go],[data-tab]'); if (b) { audio(); show(b.dataset.go || b.dataset.tab); } });
 function openModal(html) { $('#mbody').innerHTML = html; $('#modal').hidden = false; const f = $('#mbody button'); if (f) f.focus(); }
@@ -516,21 +578,24 @@ function startCreate() {
 function confirmNew(after) { if (!S) return after(); openModal(`<span class="eyebrow">Dikkat</span><h3>Mevcut kariyer silinecek</h3><p>${esc(P().first + ' ' + P().last)} kariyeri kaybolacak.</p><button class="btn" id="cY">Sil ve Baştan Başla</button><button class="btn ghost" id="cN">Vazgeç</button>`); $('#cY').onclick = () => { closeModal(); S = null; try { localStorage.removeItem(KEY); } catch (e) {} after(); }; $('#cN').onclick = closeModal; }
 $('#bNew').onclick = () => confirmNew(startCreate);
 $('#bReset').onclick = () => confirmNew(() => { $('#bContinue').hidden = true; show('start'); });
-function salaryFor(t, o) { return Math.round(12 + (t.str - 50) * 4 + Math.max(0, o - 50) * 2.5); }
+function salaryFor(t, o) { const age = S && S.player ? S.player.age : 16, yf = age <= 18 ? 0.25 : age <= 20 ? 0.5 : 1; return Math.round(yf * 1000 * (2 + Math.pow(Math.max(0, t.str - 50) / 10, 2.6) * 3 + Math.pow(Math.max(0, o - 50), 1.5) * 0.4)); }
 function stars(str) { const s = clamp(Math.round((str - 55) / 8 * 2) / 2, 0.5, 5); return '★'.repeat(Math.floor(s)) + (s % 1 ? '½' : ''); }
 $('#bCreate').onclick = () => {
   renderCreate(); if (!draft.first || !draft.last) { toast('Ad ve soyad yaz.'); return; }
+  draft.age = 16; playStory(STORY[0], showFirstOffers);
+};
+function showFirstOffers() {
   const pool = LEAGUES[0].teams.slice(3).sort(() => Math.random() - 0.5).slice(0, 3).sort((a, b) => b.str - a.str);
   $('#firstOffers').innerHTML = pool.map(t => offerHtml({ team: t.id, salary: salaryFor(t, 52), years: 3 }, true)).join('');
   pool.forEach(t => crest($('#oc-' + t.id), t));
   $('#firstOffers').onclick = e => { const b = e.target.closest('[data-sign]'); if (b) newCareer(b.dataset.sign); };
   show('firstclub');
-};
+}
 function offerHtml(o, first) {
   const t = TEAMS[o.team], L = leagueOf(t.league), gap = t.str - ovr(first ? draft : P());
   const role = gap > 14 ? 'Yedek / rotasyon' : gap > 6 ? 'Rotasyon oyuncusu' : 'İlk 11 adayı';
   return `<div class="panel offer"><div class="hd"><canvas id="oc-${t.id}" width="92" height="106"></canvas><div><h3>${esc(t.name)}</h3><p>${L.name} · <span class="stars">${stars(t.str)}</span> ${t.str}</p></div></div>
-    <dl class="kv"><dt>Haftalık maaş</dt><dd><i class="coin" style="vertical-align:-2px"></i> ${o.salary}</dd><dt>Sözleşme</dt><dd>${o.years} yıl</dd><dt>Rol</dt><dd>${role}</dd></dl>
+    <dl class="kv"><dt>Haftalık maaş</dt><dd>${eur(o.salary)}</dd><dt>Sözleşme</dt><dd>${o.years} yıl</dd><dt>Rol</dt><dd>${role}</dd></dl>
     <button class="btn" data-sign="${t.id}">${first ? 'İmzala' : 'Sözleşme Masası'}</button></div>`;
 }
 function genFixtures(ids) {
@@ -543,12 +608,14 @@ function newSeason(leagueId) {
   S.season = { year: (S.season ? S.season.year + 1 : 1), league: leagueId, week: 0, fixtures: genFixtures(ids.sort(() => Math.random() - 0.5)), table: Object.fromEntries(ids.map(id => [id, { p: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0 }])), apps: 0, goals: 0, ratings: [], form: [] };
 }
 function newCareer(teamId) {
-  const p = { ...draft, stats: { ...draft.stats }, av: { ...draft.av }, age: 17, xp: 60, coins: 150, energy: ENERGY_MAX, energyTs: Date.now(), moral: 70, trust: 45, followers: 1200, club: teamId, contract: { salary: salaryFor(TEAMS[teamId], ovr(draft)), years: 3 }, totalGoals: 0, totalApps: 0, owned: {}, xpBoost: 1, trophies: 0 };
-  S = { v: 2, player: p, season: null, news: [], history: [], offers: [], window: false, adCoins: { day: '', n: 0 }, unread: 0 };
-  newSeason(TEAMS[teamId].league);
-  news('Transfer Kulisi', `${p.first} ${p.last} (17) ilk profesyonel sözleşmesini ${TEAMS[teamId].name} ile imzaladı. Gözler genç ${POS[p.pos].name.toLocaleLowerCase('tr-TR')}da!`);
+  const p = { ...draft, stats: { ...draft.stats }, av: { ...draft.av }, age: 16, xp: 60, coins: 20000, energy: 5, energyTs: Date.now(), moral: 70, trust: 45, followers: 800, club: teamId, contract: { salary: salaryFor(TEAMS[teamId], ovr(draft)), years: 3 }, totalGoals: 0, totalAssists: 0, totalApps: 0, owned: {}, xpBoost: 1, trophies: 0, abil: {}, items: {}, maxOvr: ovr(draft), clubs: [teamId], firstClub: teamId };
+  delete p.flags; delete p.prolog;
+  S = { v: 3, player: p, season: null, news: [], history: [], offers: [], window: false, adCoins: { day: '', n: 0 }, adBox: null, boxStock: null, unread: 0, dry: 0, story: { seen: {}, flags: Object.assign({}, draft.flags || {}), log: [], n: 1 } };
+  if (draft.prolog) { S.story.seen.prolog = true; S.story.log.push(draft.prolog); S.story.n = 2; }
+  newSeason(TEAMS[teamId].league); refreshBoxStock();
+  news('Transfer Kulisi', `${p.first} ${p.last} (16) ilk profesyonel sözleşmesini ${TEAMS[teamId].name} ile imzaladı. Gözler genç ${POS[p.pos].name.toLocaleLowerCase('tr-TR')}da!`);
   persist(); closeModal(); show('hub');
-  setTimeout(() => { openModal(`<span class="eyebrow">Hoş geldin</span><h3>Kariyerin başladı</h3><p>Maçlarda sadece <b style="color:var(--ink)">kritik anları</b> sen oynarsın. Ekrana dokunup parmağını kaydır: yön ve güç. <b style="color:var(--ink)">Kısa</b> kaydırınca topu sürersin, <b style="color:var(--ink)">uzun</b> kaydırınca pas ya da şut. Parmağını <b style="color:var(--ink)">kavisli</b> çizersen top falso alır.</p><p>Rakipler çok iyi, ilk maçlarda zorlanacaksın. XP ile gelişip büyük kulüplere transfer ol.</p><button class="btn" id="okB">Anladım</button>`); $('#okB').onclick = closeModal; }, 60);
+  setTimeout(() => { openModal(`<span class="eyebrow">Hoş geldin</span><h3>Kariyerin başladı</h3><p>Maçlarda sadece <b style="color:var(--ink)">kritik anları</b> sen oynarsın. Ekrana dokunup parmağını kaydır: <b style="color:var(--ink)">kısa</b> kaydırınca topu sürersin, <b style="color:var(--ink)">uzun</b> kaydırınca pas ya da şut. Parmağını <b style="color:var(--ink)">kavisli</b> çizersen top falso alır.</p><p>Gol ve asistlerle para ve XP kazan. XP ile özelliklerini geliştir, parayla kutu, yetenek, araba ve ev al. İstersen maçı simüle edebilirsin. Hikâyen kariyerin bitene kadar sürecek.</p><button class="btn" id="okB">Anladım</button>`); $('#okB').onclick = closeModal; }, 60);
 }
 
 // ----- ana ekran
@@ -556,54 +623,61 @@ function nextFixture() { const s = S.season; if (s.week >= s.fixtures.length) re
 function sortedTable() { const t = S.season.table; return Object.keys(t).sort((a, b) => t[b].pts - t[a].pts || (t[b].gf - t[b].ga) - (t[a].gf - t[a].ga) || t[b].gf - t[a].gf); }
 const posInTable = id => sortedTable().indexOf(id) + 1;
 function renderHub() {
-  tickEnergy(); const p = P(), club = TEAMS[p.club], L = leagueOf(club.league), s = S.season;
+  if (S.ended) return show('end');
+  tickEnergy(); const p = P(), club = TEAMS[p.club], L = leagueOf(club.league), s = S.season, mx = energyMax();
+  p.maxOvr = Math.max(p.maxOvr || 0, ovr(p));
   crest($('#hubCrest'), club); $('#hClub').textContent = club.name; $('#hLeague').textContent = `${L.name} · Sezon ${s.year} · ${posInTable(p.club)}. sıra`;
   $('#hSeason').style.width = (s.week / s.fixtures.length * 100) + '%';
-  $('#hCoins').textContent = fmt(p.coins); $('#hEnergy').textContent = p.energy + '/' + ENERGY_MAX; $('#hXp').textContent = fmt(p.xp);
-  $('#hEnergyT').textContent = p.energy < ENERGY_MAX ? `+1⚡ ${Math.ceil((ENERGY_MS - (Date.now() - p.energyTs)) / 60000)} dk` : ''; $('#hEnergyT').hidden = p.energy >= ENERGY_MAX;
+  $('#hCoins').textContent = eur(p.coins); $('#hEnergy').textContent = p.energy + '/' + mx; $('#hXp').textContent = fmt(p.xp);
+  $('#hEnergyT').textContent = p.energy < mx ? `+1⚡ ${Math.ceil((energyMs() - (Date.now() - p.energyTs)) / 60000)} dk` : ''; $('#hEnergyT').hidden = p.energy >= mx;
   card($('#hubCard'), p);
   $('#hName').textContent = p.first + ' ' + p.last; $('#hOvr').textContent = ovr(p); $('#hPos').textContent = `${POS[p.pos].name} · #${p.num}`;
-  $('#hInfo').textContent = `${p.age} yaş · €${value(p).toFixed(1).replace('.', ',')} Mn · ${fmt(p.followers)} takipçi`;
+  $('#hInfo').textContent = `${p.age} yaş · €${value(p).toFixed(1).replace('.', ',')} Mn · ${fmt(p.followers)} takipçi · maaş ${eur(p.contract.salary)}/hafta`;
   $('#hMoral').style.width = p.moral + '%'; $('#hMoralN').textContent = p.moral; $('#hTrust').style.width = p.trust + '%'; $('#hTrustN').textContent = p.trust;
   const f = nextFixture();
   $('#hWeek').textContent = f ? `Hafta ${s.week + 1}/${s.fixtures.length}` : 'Sezon tamamlandı';
   $('#hForm').innerHTML = (s.form || []).slice(-5).map(r => `<i style="background:${r === 'G' ? 'var(--green)' : r === 'B' ? '#c9c9c9' : 'var(--red)'}">${r}</i>`).join('');
-  if (f) { const [a, b] = f; crest($('#crA'), TEAMS[a]); crest($('#crB'), TEAMS[b]); $('#nmA').textContent = TEAMS[a].name; $('#nmB').textContent = TEAMS[b].name; $('#psA').textContent = posInTable(a) + '. sıra'; $('#psB').textContent = posInTable(b) + '. sıra'; $('#bPlay').innerHTML = 'Maça Çık <small>⚡1</small>'; }
-  else { $('#bPlay').textContent = 'Sezonu Bitir'; }
+  if (f) { const [a, b] = f; crest($('#crA'), TEAMS[a]); crest($('#crB'), TEAMS[b]); $('#nmA').textContent = TEAMS[a].name; $('#nmB').textContent = TEAMS[b].name; $('#psA').textContent = posInTable(a) + '. sıra'; $('#psB').textContent = posInTable(b) + '. sıra'; $('#bPlay').innerHTML = 'Maça Çık <small>⚡1</small>'; $('#bSim').hidden = false; }
+  else { $('#bPlay').textContent = 'Sezonu Bitir'; $('#bSim').hidden = true; }
   const top = sortedTable(), me = top.indexOf(p.club);
   $('#miniTable').innerHTML = top.slice(0, 3).map((id, i) => `<div class="${id === p.club ? 'me' : ''}"><span>${i + 1}. ${esc(TEAMS[id].short)}</span><span>${s.table[id].pts}</span></div>`).join('') + (me > 2 ? `<div class="me"><span>${me + 1}. ${esc(club.short)}</span><span>${s.table[p.club].pts}</span></div>` : '');
-  $('#carSub').textContent = `${p.totalGoals} gol · ${p.trophies || 0} kupa`;
+  $('#carSub').textContent = `${p.totalGoals} gol · ${p.totalAssists || 0} asist · ${p.trophies || 0} kupa`;
+  $('#newsSub').textContent = S.unread ? `${S.unread} yeni haber` : 'Hakkında konuşulanlar';
   $('#trDot').hidden = !(S.window && S.offers.length);
   persist();
 }
 setInterval(() => { if (S && current === 'hub' && $('#match').hidden) renderHub(); }, 15000);
-$('#bContinue').onclick = () => { audio(); show('hub'); };
-$('#bPlay').onclick = () => {
-  audio(); const f = nextFixture(); if (!f) { endSeason(); return; }
+$('#bContinue').onclick = () => { audio(); show(S && S.ended ? 'end' : 'hub'); };
+function needEnergy(after) {
   tickEnergy(); const p = P();
-  if (p.energy <= 0) {
-    const mins = Math.ceil((ENERGY_MS - (Date.now() - p.energyTs)) / 60000);
-    openModal(`<span class="eyebrow">Enerji bitti</span><h3>Dinlenmen gerek</h3><p>${mins} dakika sonra +1 enerji dolacak.</p><button class="btn ad" id="eAd">Reklam İzle · +2 ⚡</button><button class="btn ghost" id="eBuy" ${p.coins < 80 ? 'disabled' : ''}>Enerji İçeceği · 80 altın</button><button class="btn ghost" id="eNo">Kapat</button>`);
-    $('#eAd').onclick = async () => { closeModal(); if (await Ads.rewarded('+2 enerji')) { p.energy += 2; persist(); renderHub(); toast('+2 enerji!'); } };
-    $('#eBuy').onclick = () => { p.coins -= 80; p.energy += 1; persist(); closeModal(); renderHub(); };
-    $('#eNo').onclick = closeModal; return;
-  }
-  if (Math.random() < 0.45) storyEvent(() => startMatch(f)); else startMatch(f);
-};
+  if (p.energy > 0) return after();
+  const mins = Math.ceil((energyMs() - (Date.now() - p.energyTs)) / 60000);
+  openModal(`<span class="eyebrow">Enerji bitti</span><h3>Dinlenmen gerek</h3><p>${mins} dakika sonra +1 enerji dolacak.</p><button class="btn ad" id="eAd">▶ Video İzle · +2 ⚡</button><button class="btn ghost" id="eBuy" ${p.coins < 2000 ? 'disabled' : ''}>Enerji İçeceği · ${eur(2000)}</button><button class="btn ghost" id="eNo">Kapat</button>`);
+  $('#eAd').onclick = async () => { closeModal(); if (await Ads.rewarded('+2 enerji')) { p.energy += 2; persist(); renderHub(); toast('+2 enerji!'); } };
+  $('#eBuy').onclick = () => { p.coins -= 2000; p.energy += 1; persist(); closeModal(); renderHub(); };
+  $('#eNo').onclick = closeModal;
+}
+function preMatch(f, mode) {
+  const opp = f[0] === P().club ? f[1] : f[0], go = () => mode === 'sim' ? simulateMatch(f) : startMatch(f);
+  const sc = nextStory('pre', { opp });
+  if (sc) playStory(sc, go); else if (Math.random() < 0.3) storyEvent(go); else go();
+}
+$('#bPlay').onclick = () => { audio(); const f = nextFixture(); if (!f) { endSeason(); return; } needEnergy(() => preMatch(f, 'play')); };
+$('#bSim').onclick = () => { audio(); const f = nextFixture(); if (!f) return; needEnergy(() => preMatch(f, 'sim')); };
 
 // ----- hikâye olayları
 const EVENTS = [
   { t: 'Maçtan önceki gece takım arkadaşların seni bir partiye çağırıyor.', a: ['Git, eğlen', 'Takipçi ↑ Moral ↑ · Hoca güveni ↓', { followers: 1500, moral: 8, trust: -8 }], b: ['Evde dinlen', 'Hoca güveni ↑', { trust: 6 }] },
   { t: 'Hoca antrenmanda seni yedeklerle çalıştırdı.', a: ['Sessizce çalış', 'Hoca güveni ↑ · Moral ↓', { trust: 9, moral: -5 }], b: ['Basına konuş', 'Takipçi ↑ · Hoca güveni ↓↓', { followers: 3000, trust: -14, news: 'Tribün Sesi|{n}: "Bu takımda bana değer verilmiyor!" Soyunma odası karıştı.' }] },
-  { t: 'Bir enerji içeceği markası sponsorluk teklif etti.', a: ['Kabul et', '+150 altın · Takipçi ↑', { coins: 150, followers: 1000, news: 'Futbol Hattı|{n} yeni sponsorluk anlaşmasına imza attı.' }], b: ['Futbola odaklan', 'Hoca güveni ↑', { trust: 4 }] },
+  { t: 'Bir enerji içeceği markası sponsorluk teklif etti.', a: ['Kabul et', '+€15 B · Takipçi ↑', { coins: 15000, followers: 1000, news: 'Futbol Hattı|{n} yeni sponsorluk anlaşmasına imza attı.' }], b: ['Futbola odaklan', 'Hoca güveni ↑', { trust: 4 }] },
   { t: 'Antrenör ekstra şut antrenmanı öneriyor.', a: ['Kal, çalış', '+70 XP · Moral ↓', { xp: 70, moral: -4 }], b: ['Dinlen', 'Moral ↑', { moral: 6 }] },
   { t: 'Rakip takımın stoperi sosyal medyada seni küçümsedi.', a: ['Cevap ver', 'Takipçi ↑↑ · Hoca güveni ↓', { followers: 4000, trust: -6, news: 'Tribün Sesi|Sosyal medyada gerilim! {n} rakibine sert cevap verdi.' }], b: ['Sahada cevap ver', 'Moral ↑ · Hoca güveni ↑', { moral: 5, trust: 4 }] },
-  { t: 'Ailen maça gelmek istiyor ama biletler tükenmiş.', a: ['Karaborsadan al', '−80 altın · Moral ↑↑', { coins: -80, moral: 12 }], b: ['Bir dahaki sefere', 'Moral ↓', { moral: -7 }] },
+  { t: 'Ailen maça gelmek istiyor ama biletler tükenmiş.', a: ['Karaborsadan al', '−€8 B · Moral ↑↑', { coins: -8000, moral: 12 }], b: ['Bir dahaki sefere', 'Moral ↓', { moral: -7 }] },
   { t: 'Menajerin başka bir kulüple gizlice görüşmeni istiyor.', a: ['Görüş', 'Sonraki pencerede +1 teklif', { extraOffer: 1, trust: -4 }], b: ['Kulübüne sadık kal', 'Hoca güveni ↑↑', { trust: 10 }] },
   { t: 'Taraftarlar antrenman çıkışında seni bekliyor.', a: ['İmza dağıt', 'Takipçi ↑ · Moral ↑', { followers: 1200, moral: 5 }], b: ['Hızla geç', 'Takipçi ↓', { followers: -600 }] },
   { t: 'Dizinde hafif bir ağrı var.', a: ['Oynamaya devam', 'Hoca güveni ↑ · %30 Fizik −2', { trust: 5, risk: 1 }], b: ['Doktora git', 'Hoca güveni ↓ · Moral ↑', { trust: -4, moral: 4 }] },
   { t: 'Kulübün akademisi çocuklarla antrenmana çağırıyor.', a: ['Git, yardım et', '+40 XP · Takipçi ↑', { xp: 40, followers: 800, news: 'Futbol Hattı|{n} akademideki çocuklarla antrenmana çıktı. Örnek davranış!' }], b: ['Zamanım yok', 'Moral ↑', { moral: 3 }] },
-  { t: 'Kaptan, takımdaki kötü havayı düzeltmek için senden yardım istiyor.', a: ['Takım yemeği ayarla', '−60 altın · Hoca güveni ↑ · Moral ↑', { coins: -60, trust: 6, moral: 6 }], b: ['Bana ne', 'Moral ↑ · Hoca güveni ↓', { moral: 2, trust: -5 }] },
+  { t: 'Kaptan, takımdaki kötü havayı düzeltmek için senden yardım istiyor.', a: ['Takım yemeği ayarla', '−€6 B · Hoca güveni ↑ · Moral ↑', { coins: -6000, trust: 6, moral: 6 }], b: ['Bana ne', 'Moral ↑ · Hoca güveni ↓', { moral: 2, trust: -5 }] },
   { t: 'Bir YouTube kanalı seninle röportaj yapmak istiyor.', a: ['Kabul et', 'Takipçi ↑↑', { followers: 2500, news: 'Futbol Hattı|{n} röportajda hayallerini anlattı: "Bir gün Avrupa\'da oynayacağım."' }], b: ['Antrenmana odaklan', '+30 XP', { xp: 30 }] },
 ];
 function storyEvent(next) {
@@ -618,6 +692,254 @@ function storyEvent(next) {
   };
   $('#cA').onclick = () => apply(e.a[2]); $('#cB').onclick = () => apply(e.b[2]);
 }
+
+// ----- HİKÂYE MODU -----
+const WHO = { baba: ['Baban Kemal', '#e0a050'], anne: ['Annen Ayşe', '#f08aa0'], elif: ['Kardeşin Elif', '#c9b8ff'], mert: ['Mert', '#4ea3ff'], ferit: ['Ferit Hoca', '#34d27b'], selin: ['Menajer Selin', '#f2c14e'], orhan: ['Kaptan Orhan', '#ff8a5a'], deniz: ['Gazeteci Deniz', '#7fe0ff'], hoca: ['Teknik Direktör', '#b0c4bb'], sen: ['Sen', '#ffffff'], kerem: ['Genç Kerem', '#9be28a'], doktor: ['Doktor', '#e8e8e8'] };
+function fill(t) {
+  const p = S ? P() : draft, f = S ? S.story.flags : (draft.flags || {});
+  return t.replace(/\{ad\}/g, p.first).replace(/\{soyad\}/g, p.last).replace(/\{kulup\}/g, p.club ? TEAMS[p.club].name : 'kulübün')
+    .replace(/\{mertKulup\}/g, f.mertClub ? TEAMS[f.mertClub].name : 'rakip kulüp').replace(/\{yas\}/g, p.age || 16).replace(/\{gol\}/g, p.totalGoals || 0);
+}
+function dlg(lines) {
+  return lines.map(([w, t]) => { t = fill(t); if (w === 'n') return `<p class="nar">${esc(t)}</p>`; const [nm, c] = WHO[w];
+    return `<div class="ln"><span class="av" style="background:${c}">${esc(nm.split(' ').pop()[0])}</span><div><b style="color:${c}">${esc(nm)}</b><span>${esc(t)}</span></div></div>`; }).join('');
+}
+const seasonsAt = id => S.history.filter(h => h.clubId === id).length;
+const STORY = [
+  { id: 'prolog', title: 'Mahalle Sahası', manual: true, lines: [
+    ['n', 'Bir cumartesi sabahı. Baban Kemal Usta\'nın fırınından sıcak simit kokusu taşıyor, mahallenin toprak sahasında toz bulutu kalkıyor.'],
+    ['mert', '{ad}! Son dakika, son pozisyon. Atarsan turnuva bizim!'],
+    ['n', 'Top ayağına geliyor. Tribün yok; sadece duvar dibinde çay içen birkaç amca ve kenarda şapkalı, tanımadığın bir adam var.'],
+    ['n', 'Vuruyorsun. Top direği yalayıp ağlara giriyor. Mert üstüne atlıyor, çocuklar bağırıyor. Şapkalı adam yanına geliyor.'],
+    ['ferit', 'Adım Ferit. Otuz yıldır çocuk izlerim, böyle vuruş az gördüm. Pazartesi kulüpte seçmeler var. Ailene söyle, gel.'],
+    ['baba', 'Futbol ekmek mi oğlum? Fırında bana yardım edeceksin, okulunu bitireceksin.'],
+    ['anne', 'Kemal... Çocuğun gözlerine bir bak.']],
+    choices: [{ t: 'Babana söz ver: hem okul hem futbol', d: 'Baban gönülsüz de olsa izin verir.', fx: { set: { father: 1 } } },
+              { t: 'Gizlice seçmelere git', d: 'Kararlısın ama evde fırtına kopacak.', fx: { set: { father: -1, rebel: 1 } } }] },
+  { id: 'ilkgun', title: 'İlk Gün', when: 'pre', cond: c => c.s.year === 1 && c.s.week === 0, lines: [
+    ['n', 'Soyunma odası ter, krem ve kahve kokuyor. Dolabının üstünde adın yazıyor: {soyad}. Sen hâlâ inanamıyorsun.'],
+    ['orhan', 'Hoş geldin evlat. Ben Orhan, on iki yıldır bu formayı giyiyorum. Burada kimse yıldız değildir, arma yıldızdır.'],
+    ['hoca', '{ad}, bugün yedeksin ama gözüm üstünde. Şansın gelirse sakın korkma.'],
+    ['n', 'Telefonun titriyor. Mert: "Kanka, bugün tüm mahalle seni izleyecek!"']],
+    choices: [{ t: 'Kaptana saygıyla teşekkür et', d: 'Hoca güveni ↑', fx: { trust: 6, set: { orhan: 1 } } },
+              { t: '"Yakında bu takımın yıldızı olacağım"', d: 'Moral ↑ · Takipçi ↑ · Hoca güveni ↓', fx: { moral: 6, followers: 500, trust: -4 } }] },
+  { id: 'mert_imza', title: 'Yollar Ayrılıyor', when: 'pre', cond: c => c.s.year === 1 && c.s.week >= 4,
+    init: () => { const p = P(), pool = Object.values(TEAMS).filter(t => t.league === TEAMS[p.club].league && t.id !== p.club && t.str >= 64 && t.str <= 80); S.story.flags.mertClub = (pick(pool) || Object.values(TEAMS)[1]).id; },
+    lines: [
+    ['n', 'Antrenman çıkışı telefonun çalıyor. Ekranda "Mert" yazıyor.'],
+    ['mert', 'Haberi senden önce kimse duymasın istedim: {mertKulup} ile sözleşme imzaladım!'],
+    ['n', 'Seviniyorsun. Ama içinde küçük bir sızı var. Artık aynı formayı değil, birbirinize karşı forma giyeceksiniz.'],
+    ['mert', 'Sahada karşılaşırsak acımak yok, tamam mı?']],
+    choices: [{ t: '"Gurur duyuyorum kardeşim"', d: 'Dostluk ↑ · Moral ↑', fx: { moral: 5, add: { mertFriend: 1 } } },
+              { t: '"Sahada görüşürüz"', d: 'Rekabet ↑ · Bir sonraki maçta hırslısın', fx: { moral: 8, add: { rival: 1 } } }] },
+  { id: 'ilkgol', title: 'İlk Gol', when: 'post', cond: c => c.p.totalGoals >= 1, lines: [
+    ['n', 'Tribünden yükselen ses kulaklarında hâlâ çınlıyor. İlk profesyonel golün!'],
+    ['anne', '(Telefonda, ağlayarak) Oğlum... Baban fırında radyoyu sonuna kadar açtı, bütün müşteriler alkışladı!'],
+    ['baba', '(Arkadan) Ver şunu bana... Tebrikler aslanım. Ekmek mi değil mi bilmiyorum ama... güzel goldü.'],
+    ['n', 'Bir mesaj daha: Mert. "Golü ben attım sanki, bağırmaktan sesim kısıldı!"']],
+    choices: [{ t: 'Golü babana ada', d: 'Babanla aran düzelir · Moral ↑', fx: { moral: 6, add: { father: 1 }, news: ['Futbol Hattı', '{ad} {soyad} ilk golünü fırıncı babasına adadı: "Her şey onun sayesinde."'] } },
+              { t: 'Mert\'i arayıp birlikte kutla', d: 'Dostluk ↑ · Takipçi ↑', fx: { followers: 800, add: { mertFriend: 1 } } }] },
+  { id: 'kurak', title: 'Gol Orucu', when: 'post', cond: c => (S.dry || 0) >= 3, lines: [
+    ['n', 'Üç maçtır ne gol ne asist. Sosyal medyada adının yanında artık "balon" yazıyor.'],
+    ['ferit', 'Bunu okuma. Ben sana ne demiştim? Top ayağına geldiğinde kafanda değil, kalbinde olacak.'],
+    ['ferit', 'Yarın sabah altıda mahalle sahasındayım. İster gel, ister gelme.']],
+    choices: [{ t: 'Sabah altıda sahada ol', d: '+90 XP · Moral ↑', fx: { xp: 90, moral: 8, add: { ferit: 1 } } },
+              { t: 'Telefonu kapat, uyu', d: 'Moral ↑ (dinlendin)', fx: { moral: 12 } }] },
+  { id: 'firin', title: 'Fırının Borcu', when: 'pre', cond: c => c.s.year === 1 && c.s.week >= 9, lines: [
+    ['n', 'Eve geldiğinde annenle baban mutfakta fısıldaşıyor. Masada açılmamış faturalar var.'],
+    ['anne', 'Fırının kirası iki aydır ödenmedi. Baban sana söylememi istemedi.'],
+    ['baba', 'Ben hallederim. Sen topuna bak.'],
+    ['n', 'Banka hesabında ilk maaşların duruyor.']],
+    choices: [{ t: 'Kirayı sen öde (−€8 B)', d: 'Babanla bağın güçlenir · Moral ↑', fx: { coins: -8000, moral: 8, add: { father: 2 } } },
+              { t: '"Baba, kendi yolunu bul"', d: 'Para sende kalır · Babanla aran açılır', fx: { add: { father: -1 } } }] },
+  { id: 'selin', title: 'Menajer', when: 'season', cond: c => c.s.year >= 2, lines: [
+    ['n', 'Yeni sezonun ilk günü, antrenman tesisinin kapısında takım elbiseli bir kadın seni bekliyor.'],
+    ['selin', 'Selin Aydın. Menajerim. Geçen sezon seni izledim; doğru adımlarla üç yıl içinde Avrupa\'dasın.'],
+    ['selin', 'Ama doğru adım demek, bazen kalbini değil aklını dinlemek demek.']],
+    choices: [{ t: 'Selin\'le anlaş', d: 'Transfer pencerelerinde daha çok teklif', fx: { set: { agent: 1 }, extraOffer: 1 } },
+              { t: '"Kendi işimi kendim yaparım"', d: 'Hoca güveni ↑', fx: { trust: 6 } }] },
+  { id: 'derbi', title: 'Derbi Gecesi', when: 'pre', cond: c => c.opp && TEAMS[c.opp].str >= 82 && TEAMS[c.opp].league === 'tr' && c.p.club !== c.opp, lines: [
+    ['n', 'Şehir iki renge bölünmüş. Otobüs stada yaklaşırken camlara meşaleler yansıyor.'],
+    ['orhan', 'Bu maçlar kariyer yapar ya da bitirir. Herkes sana bakacak. Nefes al.'],
+    ['n', 'Soyunma odasında hoca tahtaya tek kelime yazıyor: CESARET.']],
+    choices: [{ t: 'Kaptanın elini sık', d: 'Hoca güveni ↑ · Moral ↑', fx: { trust: 5, moral: 5 } },
+              { t: 'Kulaklığı tak, kendi dünyana gir', d: '+40 XP', fx: { xp: 40 } }] },
+  { id: 'araba', title: 'On Sekiz', when: 'pre', cond: c => c.p.age >= 18, lines: [
+    ['n', 'Ehliyet sınavından tam puanla çıkıyorsun. Takım arkadaşların galeriye gitmeni söylüyor.'],
+    ['elif', 'Abi! Babamın fırın arabası yine bozuldu, sabah ekmekleri sırtında taşıdı.'],
+    ['n', 'Bir yanda vitrindeki parlak spor araba, bir yanda babanın eski kamyoneti.']],
+    choices: [{ t: 'Kendine spor araba al (−€60 B)', d: 'Takipçi ↑↑ · Moral ↑', fx: { coins: -60000, followers: 6000, moral: 6, news: ['Tribün Sesi', '{ad} {soyad} yeni spor arabasıyla antrenmana geldi. Taraftar ikiye bölündü.'] } },
+              { t: 'Babana kamyonet al (−€30 B)', d: 'Babanla bağın güçlenir', fx: { coins: -30000, add: { father: 2 }, moral: 4 } }] },
+  { id: 'mahalle', title: 'Mahalleye Dönüş', when: 'pre', cond: c => c.p.age >= 18 && c.p.totalGoals >= 10, lines: [
+    ['n', 'Yıllar sonra mahalle sahasına gidiyorsun. Kaleler hâlâ paslı, toprak hâlâ tozlu. Ama duvarda artık senin posterin var.'],
+    ['n', 'On yaşında bir çocuk, senin forma numaranı tükenmez kalemle tişörtüne yazmış.'],
+    ['kerem', 'Abi... Ben de senin gibi olacağım. Bir gün.']],
+    choices: [{ t: 'Sahaya çim ve yeni kaleler yaptır (−€40 B)', d: 'Takipçi ↑↑ · Mahalle seni unutmaz', fx: { coins: -40000, followers: 5000, add: { legacy: 1 }, news: ['Futbol Hattı', '{ad} {soyad} çocukluğunun geçtiği mahalle sahasını yeniletti.'] } },
+              { t: 'Çocuklarla bir saat top oyna', d: 'Moral ↑↑', fx: { moral: 12, add: { legacy: 1 } } }] },
+  { id: 'gece', title: 'Gece Yarısı', when: 'pre', cond: c => c.p.age >= 19 && S.story.flags.mertClub, lines: [
+    ['n', 'Saat 02:40. Telefon çalıyor. Mert.'],
+    ['mert', 'Kanka... Bir kulüpteyiz, kavga çıktı, polis geldi. Biri video çekmiş. Kulüp öğrenirse biterim.'],
+    ['n', 'Sabah maçın var. Ama Mert senin çocukluğun.']],
+    choices: [{ t: 'Kalk, gidip Mert\'i al', d: 'Dostluk ↑↑ · Hoca güveni ↓ (uykusuzsun)', fx: { add: { mertFriend: 2 }, trust: -6, moral: -4 } },
+              { t: '"Kendi pisliğini kendin temizle"', d: 'Hoca güveni ↑ · Dostluk ↓', fx: { trust: 4, add: { mertFriend: -2, rival: 1 } } }] },
+  { id: 'milli', title: 'Ay Yıldızlı Forma', when: 'post', cond: c => ovr(c.p) >= 70, lines: [
+    ['n', 'Kulüp başkanı seni odasına çağırıyor. Masada resmi bir zarf.'],
+    ['hoca', 'Milli takım teknik direktörü aradı. Aday kadrodasın.'],
+    ['anne', '(Telefonda) Babana ben söyleyemedim, sesi titredi... Sen söyle.'],
+    ['baba', 'Oğlum... Fırının camına senin fotoğrafını asacağım. Formalı olanı.']],
+    choices: [{ t: 'Daveti kabul et', d: 'Takipçi ↑↑↑ · Milli oyuncu oldun', fx: { followers: 15000, moral: 10, set: { national: 1 }, news: ['Son Dakika', 'Milli takım aday kadrosu açıklandı: {ad} {soyad} ilk kez davet edildi!'] } }] },
+  { id: 'yurtdisi', title: 'Avrupa Rüyası', when: 'any', cond: c => S.window && S.offers.some(o => TEAMS[o.team].league !== 'tr') && TEAMS[c.p.club].league === 'tr', lines: [
+    ['selin', 'Avrupa\'dan teklif var. Gerçek bir teklif. Ama dil yok, aile yok, kimse seni tanımıyor.'],
+    ['anne', 'Gitmek istiyorsan git. Ama her bayram buradasın, söz mü?'],
+    ['elif', 'Abi bana forma getir! Hem de imzalı!']],
+    choices: [{ t: '"Hayalimin peşinden gideceğim"', d: 'Kararlılık · Moral ↑', fx: { moral: 8, set: { dream: 1 } } },
+              { t: '"Daha hazır değilim"', d: 'Hoca güveni ↑', fx: { trust: 8 } }] },
+  { id: 'yalniz', title: 'Yabancı Şehir', when: 'pre', cond: c => S.story.flags.abroad, lines: [
+    ['n', 'Yağmurlu bir pazar. Dairenin penceresinden bilmediğin bir dilde konuşan insanlara bakıyorsun.'],
+    ['n', 'Buzdolabında annenin gönderdiği kavanozdan son kalan reçel var.'],
+    ['anne', '(Görüntülü arama) Yemek yiyor musun? Zayıflamışsın. Yanına geleyim mi?']],
+    choices: [{ t: 'Dil kursuna yazıl', d: '+70 XP · Moral ↑', fx: { xp: 70, moral: 6 } },
+              { t: 'Annenle babanı yanına getir (−€50 B)', d: 'Moral ↑↑ · Aile bağı ↑', fx: { coins: -50000, moral: 18, add: { father: 1 } } }] },
+  { id: 'mertmac', title: 'Eski Dost, Yeni Rakip', when: 'pre', cond: c => c.opp && c.opp === S.story.flags.mertClub, lines: [
+    ['n', 'Tünelde yan yana duruyorsunuz. O {mertKulup} formasıyla, sen {kulup} formasıyla.'],
+    ['mert', 'Mahalledeki gibi, değil mi? Kim atarsa simit ondan.'],
+    ['n', 'Kameralar ikinizi çekiyor. Spikerler "çocukluk arkadaşları" başlığını çoktan atmış.']],
+    choices: [{ t: 'Sarıl ve sahaya birlikte çık', d: 'Dostluk ↑ · Takipçi ↑', fx: { add: { mertFriend: 1 }, followers: 3000 } },
+              { t: '"Bugün dostluk yok"', d: 'Moral ↑ · Rekabet ↑', fx: { moral: 10, add: { rival: 1 } } }] },
+  { id: 'sakatlik', title: 'Kırık Bir Bahar', when: 'pre', cond: c => c.p.age >= 20 && c.p.age <= 25 && Math.random() < 0.18, lines: [
+    ['n', 'Antrenmanda yanlış bir dönüş. Dizinden bir çatırtı sesi.'],
+    ['doktor', 'Bağlarda zorlanma var. Hızlı dönersen tekrar sakatlanabilirsin. Sabırlı olursan eskisinden güçlü dönersin.'],
+    ['ferit', '(Telefonda) Ben de 24 yaşımda sakatlanmıştım. Acele etme. Ama korkma da.']],
+    choices: [{ t: 'Hemen sahaya dön', d: 'Hoca güveni ↑ · Hız −2', fx: { trust: 6, stats: { PAC: -2 } } },
+              { t: 'Sabırla tedavi ol', d: 'Fizik +2 · Moral ↓', fx: { stats: { PHY: 2 }, moral: -6, xp: 50 } }] },
+  { id: 'elif', title: 'Kardeşinin Hayali', when: 'pre', cond: c => c.p.age >= 21, lines: [
+    ['n', 'Elif artık on dört yaşında. Bir akşam elinde krampon, kapında beliriyor.'],
+    ['elif', 'Abi, kızlar takımına seçmelere çağırdılar. Babam "kız kısmı top mu oynar" dedi.'],
+    ['n', 'Babanın sana yıllar önce söylediği sözler kulaklarında yankılanıyor.']],
+    choices: [{ t: 'Elif\'in arkasında dur (−€20 B)', d: 'Kramponlarını ve kayıt ücretini sen öde', fx: { coins: -20000, set: { elifBall: 1 }, moral: 8 } },
+              { t: '"Önce okulunu bitir"', d: 'Elif kırılır', fx: { set: { elifBall: 0 }, moral: -4 } }] },
+  { id: 'kaptan', title: 'Pazubant', when: 'pre', cond: c => c.p.trust >= 75 && c.p.age >= 23, lines: [
+    ['n', 'Hoca seni odasına çağırıyor. Masada sarı bir pazubant duruyor.'],
+    ['hoca', 'Takım sana bakıyor. Bundan sonra bu bant senin.'],
+    ['n', 'Aklına ilk gün Kaptan Orhan\'ın söyledikleri geliyor: "Arma yıldızdır."']],
+    choices: [{ t: 'Pazubandı tak', d: 'Kaptan oldun · Hoca güveni ↑↑', fx: { trust: 12, set: { captain: 1 }, news: ['Son Dakika', '{kulup}\'da yeni kaptan belli oldu: {ad} {soyad}!'] } },
+              { t: '"Henüz hazır değilim"', d: 'Moral ↑', fx: { moral: 6 } }] },
+  { id: 'babahasta', title: 'Hastane Koridoru', when: 'pre', cond: c => c.p.age >= 25, lines: [
+    ['n', 'Maçtan iki saat önce annenden mesaj: "Babanı hastaneye kaldırdık. Kalp. Merak etme, iyi."'],
+    ['n', '"Merak etme" kelimesi hiç bu kadar ağır gelmemişti.'],
+    ['hoca', 'Gitmek istersen anlarım. Ama bu maçta sana ihtiyacımız var.']],
+    choices: [{ t: 'Maçı oyna, golü babana at', d: 'Hoca güveni ↑ · Moral ↓', fx: { trust: 8, moral: -6 } },
+              { t: 'Hastaneye koş', d: 'Babanla bağın güçlenir · Hoca güveni ↓', fx: { trust: -10, add: { father: 3 }, moral: 6 } }] },
+  { id: 'altintop', title: 'Altın Top Gecesi', when: 'season', cond: c => c.p.maxOvr >= 84 && S.history.length && S.history[S.history.length - 1].goals >= 12, lines: [
+    ['n', 'Paris. Kırmızı halı, flaşlar, smokin. Adın Altın Top adayları arasında okunuyor.'],
+    ['selin', 'Kazanmasan bile buradasın. Mahalle sahasından buraya.'],
+    ['n', 'Sunucu zarfı açıyor...']],
+    choices: [{ t: 'Nefesini tut', d: 'Kazanma şansın geçen sezonki gollerine bağlı', fx: { run: () => { const g = S.history[S.history.length - 1].goals; if (Math.random() < clamp((g - 10) / 20, 0.15, 0.85)) { S.story.flags.goldenBall = 1; P().followers += 100000; news('Son Dakika', 'ALTIN TOP {ad} {soyad}\'IN! Mahalle sahasından dünyanın zirvesine.'); toast('ALTIN TOP SENİN!'); } else { news('Futbol Hattı', 'Altın Top\'u kıl payı kaçıran {ad} {soyad}: "Seneye tekrar geleceğim."'); toast('Kıl payı kaçtı...'); } } } }] },
+  { id: 'sozlesme', title: 'Sözleşme Krizi', when: 'pre', cond: c => c.p.age >= 27 && c.s.week === 2, lines: [
+    ['n', 'Kulüp yönetimi sözleşme uzatmak için masaya oturuyor. Teklif beklediğinin yarısı.'],
+    ['selin', 'Bu bir test. Ya masaya vurursun ya da sadakatini kanıtlarsın.']],
+    choices: [{ t: 'Masaya vur', d: 'Maaş ↑ · Hoca güveni ↓', fx: { run: () => { P().contract.salary = Math.round(P().contract.salary * 1.25); }, trust: -8 } },
+              { t: 'Kulübüne sadık kal', d: 'Hoca güveni ↑↑ · Taraftar sevgisi', fx: { trust: 12, followers: 5000, add: { loyal: 1 } } }] },
+  { id: 'yirmiyedi', title: 'Yirmi Yedi', when: 'pre', cond: c => c.p.age >= 27, lines: [
+    ['n', 'Yirmi yedi yaşındasın. Mahallede herkes "yirmi yedisinde ya yıldızsındır ya da hiç" derdi.'],
+    ['ferit', 'Futbolun en tehlikeli yaşı bu. Ya her şeyi verirsin ya da her şeyi kaybettiğini sanırsın.'],
+    ['n', 'Aynaya bakıyorsun. Yüzünde mahalle sahasının tozu hâlâ duruyor gibi.']],
+    choices: [{ t: 'Son şansmış gibi çalış', d: '+150 XP', fx: { xp: 150 } },
+              { t: 'Futbolun tadını çıkar', d: 'Moral ↑↑', fx: { moral: 18 } }] },
+  { id: 'mertdusus', title: 'Mert', when: 'pre', cond: c => c.p.age >= 28 && S.story.flags.mertClub, lines: [
+    ['n', 'Haberlerde Mert\'in adı var. Çapraz bağ, menisküs. Doktorlar kariyerinin bitebileceğini söylüyor.'],
+    ['mert', '(Sesli mesaj) Kanka... Bir daha top oynayamazsam ne yapacağımı bilmiyorum. Mahalleden başka bir şey bilmiyorum ki.']],
+    choices: [{ t: 'Ameliyat masraflarını üstlen (−€100 B)', d: 'Dostluk ↑↑↑', fx: { coins: -100000, add: { mertFriend: 3 }, moral: 6 } },
+              { t: 'Yanına git, elini tut', d: 'Dostluk ↑', fx: { add: { mertFriend: 1 }, trust: -3 } }] },
+  { id: 'gencrakip', title: 'Yeni Çocuk', when: 'pre', cond: c => c.p.age >= 30, lines: [
+    ['n', 'Kulüp akademiden on yedi yaşında bir forvet yükseltti: Kerem. Mahalle sahasında sana "bir gün senin gibi olacağım" diyen çocuk.'],
+    ['kerem', 'Abi, forma numaranı bana bırakır mısın? Şaka şaka... Ama bir gün.'],
+    ['hoca', 'Kerem\'i yanına al. Ya da formanı ona kaptırmamak için savaş. Seçim senin.']],
+    choices: [{ t: 'Kerem\'e akıl hocası ol', d: 'Hoca güveni ↑ · Miras', fx: { trust: 8, add: { legacy: 2 } } },
+              { t: '"Bu forma benim"', d: 'Moral ↑ · +80 XP', fx: { moral: 6, xp: 80 } }] },
+  { id: 'yaslilik', title: 'Saat İşliyor', when: 'pre', cond: c => c.p.age >= 31, lines: [
+    ['n', 'Sabahları kalkmak eskisi kadar kolay değil. Sprintten sonra nefesin eskisinden geç toparlanıyor.'],
+    ['doktor', 'Vücudun sana bir şey söylüyor. Doğru beslenme ve özel programla birkaç yıl daha kazanabilirsin.']],
+    choices: [{ t: 'Özel programa başla (−€80 B)', d: 'Yaşlanma yavaşlar', fx: { coins: -80000, set: { slowAging: 1 } } },
+              { t: 'Akışına bırak', d: 'Moral ↑', fx: { moral: 6 } }] },
+  { id: 'feritveda', title: 'Hocanın Vedası', when: 'pre', cond: c => c.p.age >= 32, lines: [
+    ['n', 'Ferit Hoca emekli oluyor. Mahalle sahasında küçük bir tören var. Çocuklar, amcalar ve sen.'],
+    ['ferit', 'Otuz yıl çocuk izledim. Çoğu kayboldu, bazıları yıldız oldu. Ama bir tanesi şapkamı çıkarttırdı.'],
+    ['ferit', '{ad}, o gün o şutu atmasaydın ben bugün burada olmazdım. Sen beni de kurtardın evlat.']],
+    choices: [{ t: 'Şapkanı çıkar, sarıl', d: 'Moral ↑↑', fx: { moral: 15, add: { ferit: 2 } } }] },
+  { id: 'efsane', title: 'Kulüp Efsanesi', when: 'season', cond: c => seasonsAt(c.p.club) >= 5, lines: [
+    ['n', 'Başkan seni stadyumun boş tribününe çıkarıyor. Bir köşede örtülü bir şey var.'],
+    ['hoca', 'Beş sezondur bu armanın bir parçasısın. Taraftar seni artık kendinden biri sayıyor.'],
+    ['n', 'Örtüyü kaldırıyorlar: duvarda dev bir pano. Senin ilk golünün fotoğrafı.']],
+    choices: [{ t: '"Kariyerimi burada bitireceğim"', d: 'Sadakat · Hoca güveni ↑↑', fx: { trust: 12, set: { loyal: 1 }, followers: 8000 } },
+              { t: '"Daha görecek çok yer var"', d: 'Daha çok transfer teklifi', fx: { extraOffer: 1 } }] },
+  { id: 'sondans', title: 'Son Dans', when: 'season', cond: c => c.p.age >= 35, lines: [
+    ['n', 'Otuz beş. Soyunma odasında artık "abi" değil "hocam" diye çağırıyorlar seni.'],
+    ['elif', 'Abi, bu sezon tüm maçlarına geleceğim. Hepsine. Söz.'],
+    ['n', 'Her maç artık bir veda provası gibi.']],
+    choices: [{ t: 'Her maçı son maçın gibi oyna', d: '+120 XP · Moral ↑', fx: { xp: 120, moral: 10 } }] },
+];
+function nextStory(when, extra = {}) {
+  if (!S || !S.story) return null; const p = P(), c = Object.assign({ p, s: S.season, f: S.story.flags }, extra);
+  for (const sc of STORY) { if (sc.manual || S.story.seen[sc.id]) continue; if (sc.when !== when && sc.when !== 'any') continue; try { if (sc.cond(c)) return sc; } catch (e) {} }
+  return null;
+}
+function applyFx(fx) {
+  if (!fx || !S) return; const p = P(), f = S.story.flags;
+  if (fx.followers) p.followers = Math.max(0, p.followers + fx.followers); if (fx.moral) p.moral = clamp(p.moral + fx.moral, 0, 100); if (fx.trust) p.trust = clamp(p.trust + fx.trust, 0, 100);
+  if (fx.coins) p.coins = Math.max(0, p.coins + fx.coins); if (fx.xp) p.xp += fx.xp; if (fx.extraOffer) S.extraOffer = (S.extraOffer || 0) + fx.extraOffer;
+  if (fx.stats) for (const k in fx.stats) p.stats[k] = clamp(p.stats[k] + fx.stats[k], 30, 99);
+  if (fx.set) Object.assign(f, fx.set); if (fx.add) for (const k in fx.add) f[k] = (f[k] || 0) + fx.add[k];
+  if (fx.news) news(fx.news[0], fill(fx.news[1])); if (fx.run) fx.run();
+}
+function playStory(sc, done) {
+  if (sc.init && S) sc.init();
+  const n = S ? S.story.n : 1;
+  const ch = sc.choices || [{ t: 'Devam', d: '' }];
+  openModal(`<span class="eyebrow">Hikâye · Bölüm ${n}</span><h3>${esc(sc.title)}</h3><div class="dlg">${dlg(sc.lines)}</div>${ch.map((c, i) => `<button class="choice" data-ch="${i}"><b>${ch.length > 1 ? 'ABCD'[i] + ') ' : ''}${esc(fill(c.t))}</b>${c.d ? `<span>${esc(c.d)}</span>` : ''}</button>`).join('')}`);
+  $('#mbody').onclick = e => {
+    const b = e.target.closest('[data-ch]'); if (!b) return; const c = ch[+b.dataset.ch]; $('#mbody').onclick = null;
+    const entry = { id: sc.id, title: sc.title, choice: fill(c.t), n };
+    if (S) { applyFx(c.fx); S.story.seen[sc.id] = true; S.story.log.push(entry); S.story.n++; persist(); }
+    else { draft.flags = Object.assign({}, (c.fx && c.fx.set) || {}); draft.prolog = entry; }
+    closeModal(); done && done();
+  };
+}
+function renderStory() {
+  const p = P(), L = S.story.log; $('#storyBack').hidden = !S.ended;
+  $('#storyIntro').textContent = `${p.first} ${p.last}'ın hikâyesi · ${L.length} bölüm yazıldı. Yeni bölümler maçlarla, yaşla ve verdiğin kararlarla açılır. Hikâye kariyerin bitene kadar sürer.`;
+  $('#storyList').innerHTML = L.map((e, i) => `<button class="chapter" data-re="${i}"><small>Bölüm ${e.n}</small><b>${esc(e.title)}</b><span>Seçimin: ${esc(e.choice)}</span></button>`).reverse().join('') || '<p>Henüz bölüm yok.</p>';
+  $('#storyList').onclick = e => { const b = e.target.closest('[data-re]'); if (!b) return; const en = L[+b.dataset.re], sc = STORY.find(q => q.id === en.id) || ENDING_SC; openModal(`<span class="eyebrow">Bölüm ${en.n}</span><h3>${esc(en.title)}</h3><div class="dlg">${dlg(sc.lines)}</div><p>Seçimin: <b style="color:var(--gold)">${esc(en.choice)}</b></p><button class="btn ghost" id="reX">Kapat</button>`); $('#reX').onclick = closeModal; };
+}
+const ENDING_SC = { id: 'veda', title: 'Son Düdük', lines: [] };
+function endingOf() {
+  const p = P(), f = S.story.flags, first = seasonsAt(p.firstClub);
+  if (p.trophies >= 3 && p.totalGoals >= 150) return ['Efsane', 'Adın stadyumun bir tribününe verildi. Çocuklar artık mahalle sahasında "ben ' + p.last + ' olacağım" diye bağırıyor.'];
+  if (f.goldenBall) return ['Altın Top Sahibi', 'Mahalle sahasından dünyanın zirvesine. Altın Top artık babanın fırınının vitrininde duruyor.'];
+  if (f.national && p.totalGoals >= 80) return ['Milli Kahraman', 'Ay yıldızlı formayla attığın goller bir neslin hafızasına kazındı.'];
+  if (f.abroad && p.maxOvr >= 82) return ['Avrupa Yıldızı', 'Yabancı bir şehirde yalnız başladın, Avrupa\'nın en büyük sahnelerinde adını bıraktın.'];
+  if (first >= 8 || f.loyal || f.loyalEnd) return ['Sadık Kaptan', 'Bir armaya ömrünü verdin. Taraftar seni bir futbolcu değil, aileden biri olarak uğurladı.'];
+  if (p.totalGoals >= 50) return ['Saygın Bir Kariyer', 'Manşetlerden çok, soyunma odalarında sevildin. Herkes senden iyi bahsetti.'];
+  return ['Mahallenin Yıldızı', 'Belki dünya adını unuttu ama mahalle sahasında o gün attığın gol hâlâ anlatılıyor.'];
+}
+function retire(reason) {
+  const p = P(), f = S.story.flags, [title, txt] = endingOf();
+  const fam = [f.father > 1 ? 'Baban seni hiç ' + '"ekmek mi" diye sorgulamadı artık; fırının duvarı senin formalarınla dolu.' : f.father < 0 ? 'Babanla aran hiç tam düzelmedi ama veda maçında tribündeydi, ağlıyordu.' : 'Baban veda maçında tribünün en önündeydi.',
+    f.elifBall ? 'Elif bugün kadın milli takımının kaptanı. Ona ilk kramponunu sen almıştın.' : 'Elif üniversiteyi bitirdi, ama hâlâ maçlarını ilk o izler.',
+    (f.mertFriend || 0) >= 2 ? 'Mert, mahalle sahasında senin adını taşıyan bir futbol okulu açtı. Birlikte.' : (f.rival || 0) >= 2 ? 'Mert\'le yollarınız ayrı düştü. Ama bir gün o eski sahada yeniden karşılaşacağınızı biliyorsun.' : 'Mert her yıl doğum gününde hâlâ simit getiriyor.',
+    (f.legacy || 0) >= 2 ? 'Kerem bir gün forma numaranı giydi ve ilk golünü sana adadı.' : ''].filter(Boolean).join(' ');
+  S.ended = { title, text: txt + ' ' + fam, reason, age: p.age };
+  S.story.log.push({ id: 'veda', title: 'Son Düdük', choice: reason, n: S.story.n }); S.story.n++;
+  news('Son Dakika', `Bir devrin sonu: ${p.first} ${p.last}, ${p.age} yaşında futbolu bıraktı. ${p.totalGoals} gol, ${p.totalAssists || 0} asist, ${p.trophies || 0} kupa.`);
+  persist(); show('end');
+}
+function renderEnd() {
+  const p = P(), e = S.ended; card($('#cardEnd'), p);
+  $('#endTitle').textContent = e.title; $('#endText').textContent = e.text;
+  $('#endKv').innerHTML = `<dt>Veda yaşı</dt><dd>${e.age}</dd><dt>Sezon</dt><dd>${S.history.length}</dd><dt>Maç</dt><dd>${p.totalApps}</dd><dt>Gol</dt><dd>${p.totalGoals}</dd><dt>Asist</dt><dd>${p.totalAssists || 0}</dd><dt>Şampiyonluk</dt><dd>${p.trophies || 0}</dd><dt>En yüksek güç</dt><dd>${p.maxOvr || ovr(p)}</dd><dt>Kulüpler</dt><dd>${[...new Set(S.history.map(h => h.club))].length}</dd><dt>Servet</dt><dd>${eur(p.coins)}</dd>`;
+}
+$('#endStory').onclick = () => show('story');
+$('#endNew').onclick = () => confirmNew(startCreate);
 
 // ----- gelişim
 function renderGrowth() {
@@ -637,7 +959,7 @@ function genOffers() {
 }
 function renderTransfer() {
   const p = P();
-  $('#trInfo').textContent = S.window ? (S.offers.length ? 'Kulüpler seninle ilgileniyor. Bir teklifi kabul edersen hemen transfer olursun.' : 'Bu pencerede teklif gelmedi. Daha iyi maç puanları ve daha yüksek reyting teklif getirir.') : `Transfer penceresi sezon ortasında (8. haftadan sonra) ve sezon sonunda açılır. Sözleşmen: ${p.contract.years} yıl, haftalık ${p.contract.salary} altın.`;
+  $('#trInfo').textContent = S.window ? (S.offers.length ? 'Kulüpler seninle ilgileniyor. Bir teklifi kabul edersen hemen transfer olursun.' : 'Bu pencerede teklif gelmedi. Daha iyi maç puanları ve daha yüksek reyting teklif getirir.') : `Transfer penceresi sezon ortasında (8. haftadan sonra) ve sezon sonunda açılır. Sözleşmen: ${p.contract.years} yıl, haftalık ${eur(p.contract.salary)}.`;
   $('#offerList').innerHTML = S.window ? S.offers.map(o => offerHtml(o)).join('') : '';
   if (S.window) S.offers.forEach(o => crest($('#oc-' + o.team), TEAMS[o.team]));
   $('#offerList').onclick = e => { const b = e.target.closest('[data-sign]'); if (!b) return; contractTable(S.offers.find(q => q.team === b.dataset.sign)); };
@@ -647,7 +969,7 @@ function contractTable(o) {
   const draw = () => {
     const sal = Math.round(o.salary * (1 + (years - 2) * 0.06));
     openModal(`<span class="eyebrow">Sözleşme Masası</span><div class="offer"><div class="hd"><canvas id="ctC" width="92" height="106" style="width:46px;height:53px"></canvas><div><h3>${esc(t.name)}</h3><p>${leagueOf(t.league).name}</p></div></div></div>
-      <dl class="kv"><dt>Oyuncu</dt><dd>${esc(p.first + ' ' + p.last)}</dd><dt>Yaş</dt><dd>${p.age}</dd><dt>Haftalık maaş</dt><dd>${sal} altın</dd><dt>Piyasa değeri</dt><dd>€${value(p).toFixed(1).replace('.', ',')} Mn</dd></dl>
+      <dl class="kv"><dt>Oyuncu</dt><dd>${esc(p.first + ' ' + p.last)}</dd><dt>Yaş</dt><dd>${p.age}</dd><dt>Haftalık maaş</dt><dd>${eur(sal)}</dd><dt>Piyasa değeri</dt><dd>€${value(p).toFixed(1).replace('.', ',')} Mn</dd></dl>
       <label class="f">Sözleşme süresi</label><div class="chips">${[1, 2, 3, 4, 5].map(y => `<button class="chip ${y === years ? 'on' : ''}" data-y="${y}">${y} yıl</button>`).join('')}</div>
       <label class="f">Forma numarası<input id="ctNum" type="number" min="1" max="99" value="${num}"></label>
       <button class="btn" id="ctOk">İmzala</button><button class="btn ghost" id="ctNo">Masadan Kalk</button>`);
@@ -656,7 +978,7 @@ function contractTable(o) {
     $('#ctNo').onclick = closeModal;
     $('#ctOk').onclick = () => {
       num = clamp(+$('#ctNum').value || num, 1, 99); const old = TEAMS[p.club];
-      p.club = t.id; p.num = num; p.contract = { salary: sal, years }; p.trust = 40; p.followers += Math.round(t.str * 60);
+      p.club = t.id; (p.clubs = p.clubs || []).push(t.id); if (t.league !== 'tr') S.story.flags.abroad = 1; p.num = num; p.contract = { salary: sal, years }; p.trust = 40; p.followers += Math.round(t.str * 60);
       news('Son Dakika', `RESMİ: ${p.first} ${p.last}, ${old.name}'dan ${t.name}'a transfer oldu. ${years} yıllık sözleşme, forma numarası ${num}!`);
       S.offers = []; S.window = false; carryToNewLeague(t.league);
       persist(); closeModal(); show('hub'); toast(t.name + ' ile imzalandı!');
@@ -683,27 +1005,120 @@ function renderTable() {
   const t = S.season.table; $('#tblTitle').textContent = leagueOf(S.season.league).name;
   $('#tblBody').innerHTML = sortedTable().map((id, i) => { const r = t[id]; return `<tr class="${id === P().club ? 'me' : ''}"><td>${i + 1}</td><td>${esc(TEAMS[id].name)}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga > 0 ? '+' : ''}${r.gf - r.ga}</td><td><b>${r.pts}</b></td></tr>`; }).join('');
 }
-const SHOP = [
-  { id: 'krampon', name: 'Altın Krampon', d: 'Şut +3 (kalıcı)', price: 600, once: true, fx: p => p.stats.SHO = Math.min(99, p.stats.SHO + 3) },
-  { id: 'hiz', name: 'Hız Kramponu', d: 'Hız +3 (kalıcı)', price: 600, once: true, fx: p => p.stats.PAC = Math.min(99, p.stats.PAC + 3) },
-  { id: 'antrenor', name: 'Kişisel Antrenör', d: 'Maçlardan %25 daha fazla XP', price: 900, once: true, fx: p => p.xpBoost = 1.25 },
-  { id: 'enerji', name: 'Enerji İçeceği', d: '+1 enerji', price: 80, fx: p => p.energy += 1 },
-  { id: 'tatil', name: 'Hafta Sonu Tatili', d: 'Moral +20', price: 150, fx: p => p.moral = Math.min(100, p.moral + 20) },
+// ----- EKONOMİ: yetenekler, gizemli yetenekler, yaşam, kutular, takviyeler -----
+const ABILS = {
+  falso: { n: 'Falso Ustası', d: 'Falsolu vuruşların %35 daha fazla kıvrılır.', price: 120000, ic: '🌀' },
+  vizyon: { n: 'Pas Vizyonu', d: 'Nişan çizgisi çok daha uzun görünür.', price: 90000, ic: '👁️' },
+  penalti: { n: 'Penaltı Soğukkanlısı', d: 'Kaleci penaltıda köşeni çok daha zor okur.', price: 150000, ic: '🥅' },
+  kontrol: { n: 'Kadife Ayak', d: 'Sert gelen topları bile kontrol edersin.', price: 180000, ic: '🪶' },
+  frikik: { n: 'Frikik Uzmanı', d: 'Frikiklerde falso artar, baraj daha az keser.', price: 200000, ic: '🎯' },
+  bomba: { n: 'Bomba Şut', d: 'Şutların %12 daha sert gider.', price: 250000, ic: '💥' },
+  roket: { n: 'Roket Hız', d: 'Koşu hızın %12 artar.', price: 300000, ic: '🚀' },
+  calim: { n: 'Çalım Kralı', d: 'Savunmacılardan sıyrılma şansın büyük ölçüde artar.', price: 350000, ic: '🕺' },
+  soguk: { n: 'Soğukkanlılık', d: 'Vuruş sapman %40 azalır.', price: 400000, ic: '🧊' },
+};
+const MYST = {
+  zaman: { n: 'Zaman Bükücü', d: 'Nişan alırken zaman neredeyse durur.', ic: '⏳' },
+  hayalet: { n: 'Hayalet Koşu', d: 'Savunmacılar paslarına çok geç tepki verir.', ic: '👻' },
+  altinayak: { n: 'Altın Ayak', d: 'Direğe çarpan şutların gole dönüşür.', ic: '🦶' },
+  kahin: { n: 'Kâhin Gözü', d: 'Topun gideceği yolu her zaman sonuna kadar görürsün.', ic: '🔮' },
+  kahraman: { n: 'Son Dakika Kahramanı', d: 'Her maçta +1 kritik an oynarsın.', ic: '🦸' },
+  midas: { n: 'Midas Dokunuşu', d: 'Maçlardan kazandığın para 1,5 katına çıkar.', ic: '👑' },
+};
+const LIFE = [
+  { id: 'sehir', g: 'Araba', n: 'Şehir Arabası', price: 25000, ic: '🚗', d: '+2 B takipçi', fx: p => p.followers += 2000 },
+  { id: 'saat', g: 'Aksesuar', n: 'Lüks Saat', price: 40000, ic: '⌚', d: '+8 B takipçi', fx: p => p.followers += 8000 },
+  { id: 'sedan', g: 'Araba', n: 'Lüks Sedan', price: 70000, ic: '🚙', d: '+5 B takipçi, moral +3', fx: p => { p.followers += 5000; p.moral = Math.min(100, p.moral + 3); } },
+  { id: 'daire', g: 'Ev', n: 'Deniz Manzaralı Daire', price: 150000, ic: '🏢', d: 'Moral +5', fx: p => p.moral = Math.min(100, p.moral + 5) },
+  { id: 'spor', g: 'Araba', n: 'Spor Araba', price: 250000, ic: '🏎️', d: '+20 B takipçi, moral +5', fx: p => { p.followers += 20000; p.moral = Math.min(100, p.moral + 5); } },
+  { id: 'villa', g: 'Ev', n: 'Villa', price: 900000, ic: '🏡', d: 'Maksimum enerji +1', fx: () => {} },
+  { id: 'superspor', g: 'Araba', n: 'Süper Spor Araba', price: 1200000, ic: '🚘', d: '+80 B takipçi', fx: p => p.followers += 80000 },
+  { id: 'hiper', g: 'Araba', n: 'Hiper Araba', price: 3500000, ic: '🏁', d: '+250 B takipçi, her maç +€10 B sponsor', fx: p => p.followers += 250000 },
+  { id: 'malikane', g: 'Ev', n: 'Malikane', price: 4000000, ic: '🏰', d: 'Maksimum enerji +1, moral +10', fx: p => p.moral = Math.min(100, p.moral + 10) },
+  { id: 'yat', g: 'Lüks', n: 'Yat', price: 8000000, ic: '🛥️', d: '+400 B takipçi, moral +15', fx: p => { p.followers += 400000; p.moral = Math.min(100, p.moral + 15); } },
+  { id: 'kosk', g: 'Ev', n: 'Ada Köşkü', price: 12000000, ic: '🏝️', d: 'Maçlardan %10 daha fazla XP', fx: () => {} },
+  { id: 'jet', g: 'Lüks', n: 'Özel Jet', price: 25000000, ic: '🛩️', d: 'Enerji %25 daha hızlı dolar', fx: () => {} },
 ];
-function renderShop() {
-  const p = P(), today = new Date().toDateString(); if (S.adCoins.day !== today) S.adCoins = { day: today, n: 0 };
-  $('#sCoins').textContent = fmt(p.coins);
-  $('#shopList').innerHTML = `<div class="panel" style="display:flex;flex-direction:column;gap:10px"><h3>Bedava Altın</h3><p>Reklam izle, 60 altın kazan. Bugün ${5 - S.adCoins.n} hakkın kaldı.</p><button class="btn ad" id="adCoin" ${S.adCoins.n >= 5 ? 'disabled' : ''}>Reklam İzle · +60</button></div>` +
-    SHOP.map(it => { const own = it.once && p.owned[it.id]; return `<div class="stat"><div class="num" style="font-size:22px">${it.once ? '★' : '+'}</div><div class="nm"><b>${it.name}</b><p style="font-size:13px">${it.d}</p></div><button class="plus" data-buy="${it.id}" ${own || p.coins < it.price ? 'disabled' : ''}>${own ? 'ALINDI' : it.price}<small style="font:600 12px var(--body)">${own ? '' : 'altın'}</small></button></div>`; }).join('');
-  $('#adCoin').onclick = async () => { if (await Ads.rewarded('+60 altın')) { S.adCoins.n++; p.coins += 60; persist(); renderShop(); toast('+60 altın!'); } };
-  $('#shopList').onclick = e => { const b = e.target.closest('[data-buy]'); if (!b || b.disabled) return; const it = SHOP.find(q => q.id === b.dataset.buy); if (p.coins < it.price) return; p.coins -= it.price; it.fx(p); if (it.once) p.owned[it.id] = 1; persist(); renderShop(); toast(it.name + ' alındı'); };
+const BOXES = {
+  bronz: { n: 'Bronz Kutu', price: 15000, ic: '📦', glow: '#c98a5a', stock: 6, ad: 3, d: 'XP, para ya da +1 özellik puanı.' },
+  gumus: { n: 'Gümüş Kutu', price: 90000, ic: '🎁', glow: '#d7dde2', stock: 4, ad: 2, d: 'Bol XP, para, +1–2 özellik, %10 özel yetenek.' },
+  altin: { n: 'Altın Kutu', price: 450000, ic: '🧰', glow: '#f2c14e', stock: 2, ad: 1, d: 'Büyük XP ve para, +2–3 özellik, %30 özel yetenek.' },
+  gizem: { n: 'Gizem Kutusu', price: 0, ic: '🔮', glow: '#9b7bff', stock: 0, ad: 2, d: 'Sadece video izleyerek açılır. Gizemli yetenekler yalnızca burada çıkar!' },
+};
+const TAKV = [
+  { id: 'enerji', n: 'Enerji İçeceği', d: '+1 enerji', price: 2000, ic: '🥤', fx: p => p.energy += 1 },
+  { id: 'tatil', n: 'Hafta Sonu Tatili', d: 'Moral +20', price: 15000, ic: '🏖️', fx: p => p.moral = Math.min(100, p.moral + 20) },
+  { id: 'antrenor', n: 'Kişisel Antrenör', d: 'Maçlardan %25 daha fazla XP (kalıcı)', price: 250000, ic: '🧑‍🏫', once: true, fx: p => p.xpBoost = 1.25 },
+  { id: 'fizyo', n: 'Kişisel Fizyoterapist', d: 'Yaşlandıkça hız ve fizik daha yavaş düşer (kalıcı)', price: 600000, ic: '💆', once: true, fx: () => {} },
+];
+function refreshBoxStock() { S.boxStock = { year: S.season ? S.season.year : 1, bronz: BOXES.bronz.stock, gumus: BOXES.gumus.stock, altin: BOXES.altin.stock }; }
+function adBoxToday() { const t = new Date().toDateString(); if (!S.adBox || S.adBox.day !== t) S.adBox = { day: t, bronz: 0, gumus: 0, altin: 0, gizem: 0 }; return S.adBox; }
+function rollBox(kind) {
+  const p = P(), r = Math.random(), sal = p.contract.salary;
+  const statUp = n => { const keys = Object.keys(POS[p.pos].w), out = []; for (let i = 0; i < n; i++) { const k = pick(keys); p.stats[k] = Math.min(99, p.stats[k] + 1); out.push(STATN[k]); } return { ic: '💪', t: '+' + n + ' özellik puanı', d: out.join(', ') + ' yükseldi. Kalıcı!' }; };
+  const abil = pool => { const free = Object.keys(pool).filter(k => !p.abil[k]); if (!free.length) return null; const k = pick(free); p.abil[k] = 1; return k; };
+  let res = null;
+  if (kind === 'gizem') {
+    if (r < 0.4) { const k = abil(MYST); if (k) res = { ic: MYST[k].ic, t: MYST[k].n, d: 'GİZEMLİ YETENEK! ' + MYST[k].d, rare: true }; }
+    if (!res) { const q = Math.random(); if (q < 0.35) { const x = ri(600, 1200); p.xp += x; res = { ic: '⭐', t: '+' + x + ' XP', d: 'Gizemin içinden yıldız tozu çıktı.' }; } else if (q < 0.7) { const m = Math.max(150000, sal * 4); p.coins += m; res = { ic: '💶', t: '+' + eur(m), d: 'Gizli bir hazine!' }; } else res = statUp(3); }
+  } else {
+    const c = { bronz: { xp: [50, 150], m: [8000, 40000], st: 1, ab: 0 }, gumus: { xp: [150, 400], m: [40000, 180000], st: ri(1, 2), ab: 0.1 }, altin: { xp: [400, 900], m: [180000, 900000], st: ri(2, 3), ab: 0.3 } }[kind];
+    if (Math.random() < c.ab) { const k = abil(ABILS); if (k) res = { ic: ABILS[k].ic, t: ABILS[k].n, d: 'ÖZEL YETENEK! ' + ABILS[k].d, rare: true }; }
+    if (!res) { if (r < 0.45) { const x = ri(...c.xp); p.xp += x; res = { ic: '⭐', t: '+' + x + ' XP', d: 'Gelişim ekranında harcayabilirsin.' }; } else if (r < 0.8) { const m = ri(...c.m); p.coins += m; res = { ic: '💶', t: '+' + eur(m), d: 'Hesabına yattı.' }; } else res = statUp(c.st); }
+  }
+  persist(); return res;
 }
+function openBox(kind) {
+  const B = BOXES[kind], res = rollBox(kind);
+  openModal(`<span class="eyebrow">${esc(B.n)}</span><div class="boxfx" style="--glow:${B.glow}99;background:radial-gradient(circle,${B.glow}55,transparent 70%)">${B.ic}</div><div id="boxRes" style="min-height:120px"></div><button class="btn" id="boxOk" disabled>Harika!</button>`);
+  setTimeout(() => { const e = $('#boxRes'); if (!e) return; e.innerHTML = `<div class="reveal"><div style="font-size:54px">${res.ic}</div><b${res.rare ? ' style="color:#c9b8ff"' : ''}>${esc(res.t)}</b><p>${esc(res.d)}</p></div>`; $('#boxOk').disabled = false; tone(660, 0.12, 'triangle', 0.15); tone(990, 0.25, 'triangle', 0.15, 0, 0.1); if (res.rare) { tone(1320, 0.4, 'triangle', 0.15, 0, 0.22); try { navigator.vibrate && navigator.vibrate([40, 30, 80]); } catch (er) {} } }, 950);
+  $('#boxOk').onclick = () => { closeModal(); if (current === 'shop') renderShop(); };
+}
+let shopSeg = 'kutu';
+function renderShop() {
+  const p = P(); $('#sCoins').textContent = eur(p.coins);
+  if (!S.boxStock || S.boxStock.year !== S.season.year) refreshBoxStock();
+  document.querySelectorAll('#shopSeg [data-seg]').forEach(b => b.classList.toggle('on', b.dataset.seg === shopSeg));
+  const ad = adBoxToday(); let h = '';
+  const card2 = (ic, title, desc, acts, cls = '') => `<div class="shopcard ${cls}"><div class="ic">${ic}</div><div class="bd"><b>${title}</b><p>${desc}</p></div>${acts ? `<div class="acts">${acts}</div>` : ''}</div>`;
+  if (shopSeg === 'kutu') {
+    h = '<p>Kutu stoğu her sezon yenilenir. Her kutuyu video izleyerek de açabilirsin.</p>' + Object.keys(BOXES).map(k => { const B = BOXES[k], st = S.boxStock[k], adLeft = B.ad - (ad[k] || 0);
+      return card2(`<span style="filter:drop-shadow(0 0 10px ${B.glow})">${B.ic}</span>`, `${B.n} ${k === 'gizem' ? '<span class="tagx m">Sadece video</span>' : ''}`, `${B.d}<br><small>${k === 'gizem' ? '' : `Bu sezon kalan: ${st}/${B.stock} · `}Bugünkü video hakkı: ${adLeft}</small>`,
+        (k === 'gizem' ? '' : `<button class="btn" data-buybox="${k}" ${st <= 0 || p.coins < B.price ? 'disabled' : ''}>${eur(B.price)}</button>`) + `<button class="btn ad" data-adbox="${k}" ${adLeft <= 0 ? 'disabled' : ''}>▶ Video İzle</button>`, k === 'gizem' ? 'myst' : ''); }).join('');
+  } else if (shopSeg === 'yetenek') {
+    h = '<p>Özel yetenekler kalıcıdır ve maçta gerçekten fark yaratır.</p>' + Object.keys(ABILS).map(k => { const A = ABILS[k], own = p.abil[k];
+      return card2(A.ic, A.n, A.d, own ? '<button class="btn ghost" disabled>Sahipsin</button>' : `<button class="btn" data-abil="${k}" ${p.coins < A.price ? 'disabled' : ''}>${eur(A.price)}</button>`, own ? 'owned' : ''); }).join('')
+      + '<h3>Gizemli Yetenekler</h3><p>Bu yetenekler parayla alınamaz. Sadece Gizem Kutusu\'ndan çıkar.</p>' + Object.keys(MYST).map(k => { const A = MYST[k], own = p.abil[k]; return card2(own ? A.ic : '❔', `${A.n} <span class="tagx m">${own ? 'Sahipsin' : 'Gizemli'}</span>`, A.d, '', 'myst'); }).join('');
+  } else if (shopSeg === 'yasam') {
+    h = '<p>Kazandığın parayla hayatını kur. Her eşyanın oyunda bir etkisi var.</p>' + LIFE.map(it => { const own = p.items[it.id];
+      return card2(it.ic, `${it.n} <span class="tagx">${it.g}</span>`, it.d, own ? '<button class="btn ghost" disabled>Sahipsin</button>' : `<button class="btn" data-life="${it.id}" ${p.coins < it.price ? 'disabled' : ''}>${eur(it.price)}</button>`, own ? 'owned' : ''); }).join('');
+  } else {
+    const t = new Date().toDateString(); if (S.adCoins.day !== t) S.adCoins = { day: t, n: 0 }; const fm = Math.max(5000, Math.round(p.contract.salary * 0.5));
+    h = card2('💶', 'Bedava Para', `Video izle, ${eur(fm)} kazan. Bugün ${5 - S.adCoins.n} hakkın kaldı.`, `<button class="btn ad" data-adcoin="1" ${S.adCoins.n >= 5 ? 'disabled' : ''}>▶ Video İzle</button>`)
+      + TAKV.map(it => { const own = it.once && p.owned[it.id]; return card2(it.ic, it.n, it.d, own ? '<button class="btn ghost" disabled>Sahipsin</button>' : `<button class="btn" data-tk="${it.id}" ${p.coins < it.price ? 'disabled' : ''}>${eur(it.price)}</button>`, own ? 'owned' : ''); }).join('');
+  }
+  $('#shopList').innerHTML = h;
+}
+$('#shopSeg').onclick = e => { const b = e.target.closest('[data-seg]'); if (b) { shopSeg = b.dataset.seg; renderShop(); } };
+$('#shopList').onclick = async e => {
+  const p = P(), b = e.target.closest('button'); if (!b || b.disabled) return;
+  if (b.dataset.buybox) { const k = b.dataset.buybox, B = BOXES[k]; if (p.coins < B.price || S.boxStock[k] <= 0) return; p.coins -= B.price; S.boxStock[k]--; persist(); renderShop(); openBox(k); }
+  else if (b.dataset.adbox) { const k = b.dataset.adbox, ad = adBoxToday(); if ((ad[k] || 0) >= BOXES[k].ad) return; if (await Ads.rewarded(BOXES[k].n + ' aç')) { ad[k] = (ad[k] || 0) + 1; persist(); renderShop(); openBox(k); } }
+  else if (b.dataset.abil) { const k = b.dataset.abil, A = ABILS[k]; if (p.coins < A.price || p.abil[k]) return; p.coins -= A.price; p.abil[k] = 1; persist(); renderShop(); toast(A.n + ' kazanıldı!'); }
+  else if (b.dataset.life) { const it = LIFE.find(q => q.id === b.dataset.life); if (p.coins < it.price || p.items[it.id]) return; p.coins -= it.price; p.items[it.id] = 1; it.fx(p); news('Futbol Hattı', `${p.first} ${p.last} kendine ${it.n.toLocaleLowerCase('tr-TR')} aldı! Sosyal medya yıkıldı.`); persist(); renderShop(); toast(it.n + ' senin!'); }
+  else if (b.dataset.tk) { const it = TAKV.find(q => q.id === b.dataset.tk); if (p.coins < it.price || (it.once && p.owned[it.id])) return; p.coins -= it.price; it.fx(p); if (it.once) p.owned[it.id] = 1; persist(); renderShop(); toast(it.n + ' alındı'); }
+  else if (b.dataset.adcoin) { if (S.adCoins.n >= 5) return; if (await Ads.rewarded('Bedava para')) { const m = Math.max(5000, Math.round(p.contract.salary * 0.5)); S.adCoins.n++; p.coins += m; persist(); renderShop(); toast('+' + eur(m)); } }
+};
 function renderCareer() {
   const p = P();
-  $('#carKv').innerHTML = `<dt>Oyuncu</dt><dd>${esc(p.first + ' ' + p.last)}</dd><dt>Yaş</dt><dd>${p.age}</dd><dt>Genel güç</dt><dd>${ovr(p)}</dd><dt>Toplam maç</dt><dd>${p.totalApps}</dd><dt>Toplam gol</dt><dd>${p.totalGoals}</dd><dt>Şampiyonluk</dt><dd>${p.trophies || 0} 🏆</dd><dt>Takipçi</dt><dd>${fmt(p.followers)}</dd><dt>Piyasa değeri</dt><dd>€${value(p).toFixed(1).replace('.', ',')} Mn</dd>`;
-  $('#carBody').innerHTML = S.history.length ? S.history.map(h => `<tr><td>${h.year}</td><td>${esc(h.club)}</td><td>${h.apps}</td><td>${h.goals}</td><td>${h.avg}</td><td>${h.pos}.</td></tr>`).join('') : '<tr><td colspan="6">İlk sezonun devam ediyor.</td></tr>';
+  $('#carKv').innerHTML = `<dt>Oyuncu</dt><dd>${esc(p.first + ' ' + p.last)}</dd><dt>Yaş</dt><dd>${p.age}</dd><dt>Genel güç</dt><dd>${ovr(p)} (en yüksek ${p.maxOvr || ovr(p)})</dd><dt>Toplam maç</dt><dd>${p.totalApps}</dd><dt>Gol / Asist</dt><dd>${p.totalGoals} / ${p.totalAssists || 0}</dd><dt>Şampiyonluk</dt><dd>${p.trophies || 0} 🏆</dd><dt>Servet</dt><dd>${eur(p.coins)}</dd><dt>Takipçi</dt><dd>${fmt(p.followers)}</dd><dt>Piyasa değeri</dt><dd>€${value(p).toFixed(1).replace('.', ',')} Mn</dd>
+    <dt>Mülkler</dt><dd>${LIFE.filter(it => p.items[it.id]).map(it => it.ic).join(' ') || '—'}</dd><dt>Yetenekler</dt><dd>${[...Object.keys(ABILS).filter(k => p.abil[k]).map(k => ABILS[k].ic), ...Object.keys(MYST).filter(k => p.abil[k]).map(k => MYST[k].ic)].join(' ') || '—'}</dd>`;
+  $('#carBody').innerHTML = S.history.length ? S.history.map(h => `<tr><td>${h.year}</td><td>${esc(h.club)}</td><td>${h.apps}</td><td>${h.goals}${h.assists ? '+' + h.assists : ''}</td><td>${h.avg}</td><td>${h.pos}.</td></tr>`).join('') : '<tr><td colspan="6">İlk sezonun devam ediyor.</td></tr>';
 }
-function renderSettings() { $('#sndOn').classList.toggle('on', SND.on); $('#sndOff').classList.toggle('on', !SND.on); $('#resetBox').hidden = !S; }
+
+function renderSettings() { $('#sndOn').classList.toggle('on', SND.on); $('#sndOff').classList.toggle('on', !SND.on); $('#nmReal').classList.toggle('on', NAME_MODE === 'real'); $('#nmSafe').classList.toggle('on', NAME_MODE === 'safe'); $('#resetBox').hidden = !S; }
+function setNames(m) { NAME_MODE = m; try { localStorage.setItem(NAME_KEY, m); } catch (e) {} applyEdits(); renderSettings(); toast(m === 'safe' ? 'Güvenli isimlere geçildi' : 'Gerçek isimlere geçildi'); }
+$('#nmReal').onclick = () => setNames('real'); $('#nmSafe').onclick = () => setNames('safe');
 $('#setBack').onclick = () => show(S && prevScreen !== 'start' ? prevScreen : 'start');
 $('#sndOn').onclick = () => { SND.on = true; try { localStorage.setItem('yildizYolu.snd', '1'); } catch (e) {} audio(); if (SND.master) SND.master.gain.value = 0.8; renderSettings(); };
 $('#sndOff').onclick = () => { SND.on = false; try { localStorage.setItem('yildizYolu.snd', '0'); } catch (e) {} if (SND.master) SND.master.gain.value = 0; renderSettings(); };
@@ -712,7 +1127,7 @@ function renderEditor() {
   $('#edLeagues').innerHTML = LEAGUES.map(L => `<button class="chip ${L.id === edLeague ? 'on' : ''}" data-l="${L.id}">${L.name.replace(' Ligi', '')}</button>`).join('');
   $('#edLeagues').onclick = e => { const b = e.target.closest('[data-l]'); if (b) { edLeague = b.dataset.l; renderEditor(); } };
   const L = leagueOf(edLeague);
-  $('#edList').innerHTML = L.teams.map(t => `<div class="panel edit" data-id="${t.id}"><canvas width="80" height="92"></canvas><input data-k="name" maxlength="26" value="${esc(t.name)}" aria-label="Takım adı"><input data-k="short" maxlength="3" value="${esc(t.short)}" aria-label="Kısaltma"><input type="color" data-k="c1" value="${t.c1}" aria-label="Forma rengi"><input type="color" data-k="c2" value="${t.c2}" aria-label="İkinci renk"></div>`).join('');
+  $('#edList').innerHTML = L.teams.map(t => `<div class="panel edit" data-id="${t.id}"><canvas width="80" height="92"></canvas><input data-k="name" maxlength="26" value="${esc(t.name)}" aria-label="Takım adı"><input data-k="short" maxlength="4" value="${esc(t.short)}" aria-label="Kısaltma"><input type="color" data-k="c1" value="${t.c1}" aria-label="Forma rengi"><input type="color" data-k="c2" value="${t.c2}" aria-label="İkinci renk"></div>`).join('');
   $('#edList').querySelectorAll('.edit').forEach(row => crest(row.querySelector('canvas'), TEAMS[row.dataset.id]));
   $('#edList').oninput = e => { const inp = e.target.closest('input'); if (!inp) return; const row = inp.closest('.edit'), id = row.dataset.id; let v = inp.value; if (inp.dataset.k === 'short') v = v.toLocaleUpperCase('tr-TR'); if (inp.dataset.k === 'name' && !v.trim()) return; saveEdit(id, { [inp.dataset.k]: v }); crest(row.querySelector('canvas'), TEAMS[id]); };
 }
@@ -729,35 +1144,59 @@ function simGame(a, b, ga, gb) {
 function endSeason() {
   const p = P(), s = S.season, pos = posInTable(p.club), club = TEAMS[p.club];
   const avg = s.ratings.length ? (s.ratings.reduce((a, b) => a + b, 0) / s.ratings.length).toFixed(2) : '—';
-  S.history.push({ year: s.year, club: club.name, apps: s.apps, goals: s.goals, avg, pos });
-  let bonus = 0; if (pos === 1) { bonus = 500; p.trophies = (p.trophies || 0) + 1; news('Son Dakika', `${club.name} ŞAMPİYON! ${p.first} ${p.last} sezonu ${s.goals} golle kapattı.`); } else news('Maç Merkezi', `${club.name} sezonu ${pos}. sırada tamamladı. ${p.first} ${p.last}: ${s.apps} maç, ${s.goals} gol.`);
+  S.history.push({ year: s.year, club: club.name, clubId: p.club, apps: s.apps, goals: s.goals, assists: s.assists || 0, avg, pos, age: p.age });
+  let bonus = 0; if (pos === 1) { bonus = Math.round(p.contract.salary * 10); p.trophies = (p.trophies || 0) + 1; news('Son Dakika', `${club.name} ŞAMPİYON! ${p.first} ${p.last} sezonu ${s.goals} gol, ${s.assists || 0} asistle kapattı.`); } else news('Maç Merkezi', `${club.name} sezonu ${pos}. sırada tamamladı. ${p.first} ${p.last}: ${s.apps} maç, ${s.goals} gol, ${s.assists || 0} asist.`);
   p.coins += bonus; p.age++; p.contract.years--;
-  if (p.age >= 30) ['PAC', 'PHY'].forEach(k => p.stats[k] = Math.max(30, p.stats[k] - ri(1, 3)));
-  openModal(`<span class="eyebrow">Sezon ${s.year} bitti</span><h3>${esc(club.name)} · ${pos}. sıra</h3><dl class="kv"><dt>Maç</dt><dd>${s.apps}</dd><dt>Gol</dt><dd>${s.goals}</dd><dt>Ortalama puan</dt><dd>${avg}</dd>${bonus ? `<dt>Şampiyonluk primi</dt><dd>+${bonus} altın</dd>` : ''}<dt>Yeni yaş</dt><dd>${p.age}</dd><dt>Sözleşmede kalan</dt><dd>${Math.max(0, p.contract.years)} yıl</dd></dl>
-    <p>${p.contract.years <= 0 ? 'Sözleşmen bitti! Transfer ekranından yeni bir kulüp seç ya da kulübünle yeniden anlaş.' : 'Transfer penceresi açıldı. Teklifleri inceleyebilirsin.'}</p><button class="btn" id="nsOk">Yeni Sezon</button>`);
-  $('#nsOk').onclick = () => {
-    genOffers(); S.window = true;
-    if (p.contract.years <= 0) S.offers.unshift({ team: p.club, salary: salaryFor(club, ovr(p)), years: 2 });
-    newSeason(TEAMS[p.club].league); persist(); closeModal(); show(S.offers.length ? 'transfer' : 'hub');
-  };
+  const slow = p.owned.fizyo || S.story.flags.slowAging;
+  if (p.age >= 30) ['PAC', 'PHY'].forEach(k => p.stats[k] = Math.max(30, p.stats[k] - (slow ? ri(0, 2) : ri(1, 3))));
+  if (p.age >= 33) ['SHO', 'DRI', 'PAS'].forEach(k => p.stats[k] = Math.max(30, p.stats[k] - (slow ? ri(0, 1) : ri(0, 2))));
+  persist();
+  openModal(`<span class="eyebrow">Sezon ${s.year} bitti</span><h3>${esc(club.name)} · ${pos}. sıra</h3><dl class="kv"><dt>Maç</dt><dd>${s.apps}</dd><dt>Gol / Asist</dt><dd>${s.goals} / ${s.assists || 0}</dd><dt>Ortalama puan</dt><dd>${avg}</dd>${bonus ? `<dt>Şampiyonluk primi</dt><dd>+${eur(bonus)}</dd>` : ''}<dt>Yeni yaş</dt><dd>${p.age}</dd><dt>Sözleşmede kalan</dt><dd>${Math.max(0, p.contract.years)} yıl</dd></dl>
+    <p>${p.age >= 40 ? 'Kırk yaşına geldin. Son düdük çalmak üzere.' : p.age >= 34 ? 'Kariyerinde dönüm noktasındasın.' : p.contract.years <= 0 ? 'Sözleşmen bitti! Yeni bir kulüp seç ya da kulübünle yeniden anlaş.' : 'Transfer penceresi açıldı. Kutu stokları yenilendi.'}</p><button class="btn" id="nsOk">Devam</button>`);
+  $('#nsOk').onclick = () => { closeModal(); afterSeason(); };
 }
-
+function afterSeason() {
+  const p = P();
+  if (p.age >= 40) return retire('Kırk yaşında, son düdük çaldı. Ayakta alkışlandın.');
+  if (p.age >= 34) return decision34();
+  continueSeason();
+}
+function continueSeason() {
+  const p = P(), club = TEAMS[p.club];
+  genOffers(); S.window = true;
+  if (p.contract.years <= 0) S.offers.unshift({ team: p.club, salary: salaryFor(club, ovr(p)), years: p.age >= 33 ? 1 : 2 });
+  newSeason(club.league); refreshBoxStock(); persist();
+  const go = () => show(S.offers.length ? 'transfer' : 'hub'), sc = nextStory('season');
+  if (sc) playStory(sc, go); else go();
+}
+function decision34() {
+  const p = P(), club = TEAMS[p.club];
+  openModal(`<span class="eyebrow">Dönüm noktası · ${p.age} yaş</span><h3>Son düdük mü, yeni bir sayfa mı?</h3><div class="dlg">${dlg([['n', 'Sezonun son akşamı. Boş stadyumda, orta yuvarlakta tek başına oturuyorsun.'], ['anne', 'Ne karar verirsen ver, bizim için hep o mahalle sahasındaki çocuksun.'], ['selin', 'Teklifler hâlâ geliyor. Ama hangi formayla veda edeceğine sen karar vereceksin.']])}</div>
+    <button class="choice" id="dR"><b>Emekli ol</b><span>Kariyerini burada noktala. Hikâyenin finali açılır.</span></button>
+    <button class="choice" id="dS"><b>${esc(club.name)}'da kal</b><span>1 yıllık yeni sözleşme, maaş biraz düşer.</span></button>
+    <button class="choice" id="dT"><b>Transfer ol</b><span>Gelen teklifleri değerlendir.</span></button>`);
+  $('#dR').onclick = () => { closeModal(); retire('Kendi kararınla, başın dik veda ettin.'); };
+  $('#dS').onclick = () => { closeModal(); p.contract = { salary: Math.round(salaryFor(club, ovr(p)) * 0.8), years: 1 }; S.story.flags.loyalEnd = 1; news('Transfer Kulisi', `${p.first} ${p.last}, ${p.age} yaşında ${club.name} ile 1 yıl daha uzattı.`); S.window = false; S.offers = []; newSeason(club.league); refreshBoxStock(); persist(); const sc = nextStory('season'); sc ? playStory(sc, () => show('hub')) : show('hub'); };
+  $('#dT').onclick = () => { closeModal(); continueSeason(); };
+}
 // ================= MAÇ MOTORU (fizik ve yapay zekâ; koordinat: x yatay, y kale çizgisinden uzaklık) =================
 const mEl = $('#match');
 let M = null, raf = 0, last = 0;
 const GOAL_W = 3.66;
 function kitFor(t, other) { let shirt = t.c1, shorts = t.c2; if (other && cdist(shirt, other) < 130) { shirt = t.c2; shorts = t.c1; if (cdist(shirt, other) < 130) { shirt = cdist('#ffffff', other) > 200 ? '#f5f5f5' : '#151515'; shorts = shirt === '#f5f5f5' ? '#151515' : '#f5f5f5'; } } return { shirt, shorts }; }
-function startMatch(f) {
-  const p = P(); p.energy--; p.energyTs = p.energy === ENERGY_MAX - 1 ? Date.now() : p.energyTs; persist();
+function startMatch(f, replay) {
+  const p = P();
+  if (!replay) { p.energy--; if (p.energy === energyMax() - 1) p.energyTs = Date.now(); }
+  persist(); const snap = JSON.stringify(S);
   const [h, a] = f, us = p.club, opp = h === us ? a : h, home = h === us;
   const oppS = TEAMS[opp].str, ourS = TEAMS[us].str;
   const d = clamp((oppS - 52) / 40 + 0.15, 0.15, 1);
   const bench = p.trust < 22 || (ourS - ovr(p) > 16 && Math.random() < 0.5);
-  const n = bench ? 2 : 3 + Math.floor(p.trust / 40);
+  const n = (bench ? 2 : 3 + Math.floor(p.trust / 40)) + (has('kahraman') ? 1 : 0);
   const types = []; for (let i = 0; i < n; i++) { const r = Math.random(); types.push(r < 0.12 ? 'frikik' : r < 0.18 ? 'penalti' : r < 0.42 ? 'kontra' : r < 0.62 ? 'ceza' : 'atak'); }
   const mins = types.map(() => ri(bench ? 62 : 5, 89)).sort((x, y) => x - y);
   const ourKit = kitFor(TEAMS[us]), oppKit = kitFor(TEAMS[opp], ourKit.shirt);
-  M = { f, us, opp, home, d, ourS, oppS, types, mins, idx: -1, my: 0, them: 0, goals: 0, passes: 0, fails: 0, shots: 0, adUsed: false, pathAd: false, bench, oppGoalsGiven: 0, ourKit, oppKit };
+  M = { f, us, opp, home, d, ourS, oppS, types, mins, idx: -1, my: 0, them: 0, goals: 0, assists: 0, passes: 0, fails: 0, shots: 0, adUsed: false, pathAd: false, bench, oppGoalsGiven: 0, ourKit, oppKit, snap, replay: !!replay };
   M.oppGoals = poisson(clamp(1.15 + (oppS - ourS) / 22 + (home ? 0 : 0.15), 0.25, 3.5));
   M.ourExtra = poisson(clamp(0.55 + (ourS - oppS) / 30 + (home ? 0.15 : 0), 0.1, 2.5));
   const hs = TEAMS[home ? us : opp], as = TEAMS[home ? opp : us], hk = home ? ourKit : oppKit, ak = home ? oppKit : ourKit;
@@ -766,7 +1205,7 @@ function startMatch(f) {
   R.use3D = init3D(); $('#pitch3d').hidden = !R.use3D; $('#pitch2d').hidden = R.use3D; resizeMatch();
   if (R.use3D) setupTeams3D();
   updScore(); sfx.crowd(0.14, 1);
-  panel(`<span class="eyebrow">${bench ? 'Yedek kulübesindesin' : 'İlk 11'}</span><h3 style="font-size:26px">${esc(hs.name)} – ${esc(as.name)}</h3><p>${bench ? 'Hoca sana güvenmiyor, ikinci yarıda oyuna gireceksin. ' : ''}Bu maçta ${n} kritik an oynayacaksın. Rakip gücü ${oppS}.</p><button class="btn" id="kick">Başlama Vuruşu</button>`);
+  panel(`<span class="eyebrow">${replay ? 'Rövanş · maç yeniden oynanıyor' : bench ? 'Yedek kulübesindesin' : 'İlk 11'}</span><h3 style="font-size:26px">${esc(hs.name)} – ${esc(as.name)}</h3><p>${bench ? 'Hoca sana güvenmiyor, ikinci yarıda oyuna gireceksin. ' : ''}Bu maçta ${n} kritik an oynayacaksın. Rakip gücü ${oppS}. Gol: ${eur(Math.round(p.contract.salary * 0.3 + 5000))} · Asist: ${eur(Math.round(p.contract.salary * 0.15 + 2500))} prim.</p><button class="btn" id="kick">Başlama Vuruşu</button>`);
   $('#kick').onclick = () => { $('#mpanel').hidden = true; sfx.whistle(); nextMoment(); };
   cancelAnimationFrame(raf); last = performance.now(); raf = requestAnimationFrame(loop);
 }
@@ -812,31 +1251,35 @@ function nextMoment() {
 $('#tLoft').onclick = () => { if (!M || !M.W || M.W.phase !== 'aim') return; M.W.loft = !M.W.loft; $('#tLoft').classList.toggle('on', M.W.loft); };
 $('#tPath').onclick = async () => { if (!M || M.pathAd) return; if (await Ads.rewarded('Bu maç boyunca topun yolunu tam göster')) { M.pathAd = true; $('#tPath').hidden = true; toast('Top yolu bu maç boyunca tam görünecek'); } };
 
-const youSpeed = () => 6.4 + P().stats.PAC * 0.034;
+const youSpeed = () => (6.4 + P().stats.PAC * 0.034) * (has('roket') ? 1.12 : 1);
 const defSpeed = () => 6.0 + M.d * 2.2;
 function kick(W, who, ang, power, spin, loft, isAI) {
   const b = W.ball, p = P(), st = p.stats;
   const shot = !isAI && power > 0.55;
   const acc = isAI ? clamp((M.ourS - 40) / 60, 0.3, 0.95) : (shot ? st.SHO : st.PAS) / 100;
   const moralF = isAI ? 1 : 1.35 - p.moral / 100 * 0.6;
-  ang += randn() * (0.008 + (1 - acc) * 0.065) * moralF;
+  ang += randn() * (0.008 + (1 - acc) * 0.065) * moralF * (!isAI && has('soguk') ? 0.6 : 1);
   const drib = !isAI && !loft && power < 0.28;
   let sp = isAI ? power : drib ? 2.5 + power * 20 : 5 + power * (17 + st.SHO * 0.13);
   if (loft) sp *= 0.72;
+  if (!isAI && !drib && has('bomba')) sp *= 1.12;
+  b.cm = isAI ? 1 : myCurve(W);
   b.drib = drib; b.vx = Math.cos(ang) * sp; b.vy = Math.sin(ang) * sp; b.vz = loft ? 4.5 + power * 6.5 : 0; b.z = loft ? 0.05 : 0; b.spin = clamp(spin, -1, 1);
   b.owner = null; b.kicker = who; b.kickT = W.t; b.still = 0; who.kickT = performance.now(); who.face = ang;
   sfx.kick(Math.min(1, sp / 30));
   if (!isAI) { W.touches++; if (b.vy < -8 && b.y < 32) M.shots++; else if (!drib) M.passes++; }
-  if (W.type === 'penalti' && !isAI) { const gk = W.gk, tx = predictGoalX(b), read = Math.random() < 0.3 + M.d * 0.3; gk.dive = { x: clamp(read ? tx + rand(-0.8, 0.8) : -Math.sign(tx || 1) * rand(1, 3), -3.6, 3.6), t: W.t + 0.12 }; }
+  if (W.type === 'penalti' && !isAI) { const gk = W.gk, tx = predictGoalX(b), read = Math.random() < 0.3 + M.d * 0.3 - (has('penalti') ? 0.28 : 0); gk.dive = { x: clamp(read ? tx + rand(-0.8, 0.8) : -Math.sign(tx || 1) * rand(1, 3), -3.6, 3.6), t: W.t + 0.12 }; }
 }
 const CURVE = 0.28;
-function predictGoalX(b) { let x = b.x, y = b.y, vx = b.vx, vy = b.vy, s = b.spin; for (let i = 0; i < 200 && y > 0; i++) { const sp = Math.hypot(vx, vy) || 1; vx += -vy / sp * s * sp * CURVE * 0.02; vy += vx / sp * s * sp * CURVE * 0.02; x += vx * 0.02; y += vy * 0.02; } return x; }
+const myCurve = W => (has('falso') ? 1.35 : 1) * (W && W.type === 'frikik' && has('frikik') ? 1.25 : 1);
+function pathFrac(drib) { const st = P().stats; return M.pathAd || drib || has('kahin') ? 1 : Math.min(1, 0.22 + st.PAS / 100 * 0.3 + (has('vizyon') ? 0.35 : 0)); }
+function predictGoalX(b) { let x = b.x, y = b.y, vx = b.vx, vy = b.vy, s = b.spin; const cm = b.cm || 1; for (let i = 0; i < 200 && y > 0; i++) { const sp = Math.hypot(vx, vy) || 1; vx += -vy / sp * s * sp * CURVE * cm * 0.02; vy += vx / sp * s * sp * CURVE * cm * 0.02; x += vx * 0.02; y += vy * 0.02; } return x; }
 const decel = (sp, z, drib) => z > 0.02 ? 0.06 * sp : drib ? 3.2 + 0.12 * sp : 1.5 + 0.075 * sp;
 function simBall(b, steps, dt, out) {
-  let x = b.x, y = b.y, z = b.z, vx = b.vx, vy = b.vy, vz = b.vz, s = b.spin; const drib = b.drib;
+  let x = b.x, y = b.y, z = b.z, vx = b.vx, vy = b.vy, vz = b.vz, s = b.spin; const drib = b.drib, cm = b.cm || 1;
   for (let i = 0; i < steps; i++) {
     const sp = Math.hypot(vx, vy); if (sp < 0.2) break;
-    if (sp > 3) { const k = s * sp * CURVE; vx += -vy / sp * k * dt; vy += vx / sp * k * dt; s *= Math.exp(-0.5 * dt); }
+    if (sp > 3) { const k = s * sp * CURVE * cm; vx += -vy / sp * k * dt; vy += vx / sp * k * dt; s *= Math.exp(-0.5 * dt); }
     const ns = Math.max(0, sp - decel(sp, z, drib) * dt); vx *= ns / sp; vy *= ns / sp;
     if (z > 0 || vz > 0) { vz -= 9.8 * dt; z += vz * dt; if (z < 0) { z = 0; vz = Math.abs(vz) > 2 ? -vz * 0.4 : 0; } }
     x += vx * dt; y += vy * dt; if (out) out.push([x, y, z]); if (y < -1) break;
@@ -862,34 +1305,37 @@ function moveTo(e, tx, ty, max, dt, acc = 22) {
 }
 function endMoment(W, kind, text) {
   if (W.phase === 'done') return; W.phase = 'done'; W.outcome = kind; W.msgT = 0;
-  const msg = $('#mmsg'); msg.textContent = text; msg.style.color = kind === 'goal' ? 'var(--gold)' : '#fff'; msg.classList.remove('pop'); void msg.offsetWidth; msg.classList.add('pop');
+  const good = kind === 'goal' || kind === 'assist';
+  const msg = $('#mmsg'); msg.textContent = text; msg.style.color = good ? 'var(--gold)' : '#fff'; msg.classList.remove('pop'); void msg.offsetWidth; msg.classList.add('pop');
   $('#mhint').textContent = ''; $('#tLoft').hidden = true; $('#tPath').hidden = true; $('#power').hidden = true;
-  if (kind === 'goal') { M.my++; M.goals++; updScore(); sfx.roar(); W.celebrate = true; if (R.use3D) confetti3D(); try { navigator.vibrate && navigator.vibrate([30, 40, 60]); } catch (e) {} }
+  if (good) { M.my++; if (kind === 'goal') M.goals++; else M.assists++; updScore(); sfx.roar(); W.celebrate = true; if (R.use3D) confetti3D(); try { navigator.vibrate && navigator.vibrate([30, 40, 60]); } catch (e) {} }
   else { M.fails++; if (kind === 'save' || text === 'DİREK!') sfx.ooh(); }
   setTimeout(() => {
     msg.textContent = '';
-    if (kind !== 'goal' && !M.adUsed) {
+    if (!good && !M.adUsed) {
       panel(`<h3>${esc(text)}</h3><p>Bu anı reklam izleyerek bir kez daha oynayabilirsin (maç başına 1 hak).</p><button class="btn ad" id="again">İkinci Şans · Reklam İzle</button><button class="btn ghost" id="goOn">Devam</button>`);
       $('#again').onclick = async () => { if (await Ads.rewarded('Bu anı yeniden oyna')) { M.adUsed = true; M.fails--; $('#mpanel').hidden = true; M.idx--; nextMoment(); } };
       $('#goOn').onclick = () => { $('#mpanel').hidden = true; nextMoment(); };
     } else nextMoment();
-  }, kind === 'goal' ? 2600 : 1600);
+  }, good ? 2600 : 1600);
 }
 function step(dt) {
   const W = M.W; if (!W) return;
   const b = W.ball, you = W.you, d = M.d, p = P();
-  const ts = W.phase === 'aim' ? (W.type === 'frikik' || W.type === 'penalti' ? 0 : 0.22) : 1;
+  const ts = W.phase === 'aim' ? (W.type === 'frikik' || W.type === 'penalti' ? 0 : has('zaman') ? 0.08 : 0.22) : 1;
   const gdt = dt * ts; W.t += gdt;
   if (W.phase === 'done') { W.msgT += dt; if (W.celebrate) { you.vx = you.vy = 0; } return; }
   if (b.owner) { const o = b.owner; b.x = o.x + Math.cos(o.face) * 0.6; b.y = o.y + Math.sin(o.face) * 0.6; b.z = 0; b.vx = b.vy = 0; b.ownT += gdt; }
   else {
     const py = b.y, sp = Math.hypot(b.vx, b.vy);
-    if (sp > 3) { const k = b.spin * sp * CURVE; b.vx += -b.vy / sp * k * gdt; b.vy += b.vx / sp * k * gdt; b.spin *= Math.exp(-0.5 * gdt); }
+    if (sp > 3) { const k = b.spin * sp * CURVE * (b.cm || 1); b.vx += -b.vy / sp * k * gdt; b.vy += b.vx / sp * k * gdt; b.spin *= Math.exp(-0.5 * gdt); }
     if (sp > 0) { const ns = Math.max(0, sp - decel(sp, b.z, b.drib) * gdt); b.vx *= ns / sp; b.vy *= ns / sp; }
     if (b.z > 0 || b.vz > 0) { b.vz -= 9.8 * gdt; b.z += b.vz * gdt; if (b.z < 0) { b.z = 0; b.vz = Math.abs(b.vz) > 2 ? -b.vz * 0.4 : 0; } }
     b.x += b.vx * gdt; b.y += b.vy * gdt;
     if (py >= 0 && b.y < 0) {
-      if (Math.abs(b.x) < GOAL_W - 0.11 && b.z < 2.44) { W.netHit = { x: b.x, z: b.z, t: 0 }; return endMoment(W, 'goal', 'GOL!'); }
+      const mateGoal = b.kicker && b.kicker.team === 0 && !b.kicker.isYou;
+      if (Math.abs(b.x) < GOAL_W - 0.11 && b.z < 2.44) { W.netHit = { x: b.x, z: b.z, t: 0 }; return mateGoal ? endMoment(W, 'assist', 'GOL! ASİST SENDEN') : endMoment(W, 'goal', 'GOL!'); }
+      if (Math.abs(Math.abs(b.x) - GOAL_W) < 0.25 && b.z < 2.5 && has('altinayak') && b.kicker === you) { W.netHit = { x: b.x, z: b.z, t: 0 }; toast('Altın Ayak! Direkten içeri!'); return endMoment(W, 'goal', 'GOL!'); }
       if (Math.abs(Math.abs(b.x) - GOAL_W) < 0.25 && b.z < 2.5) { b.vy = -b.vy * 0.55; b.vx += rand(-3, 3); b.y = 0.05; sfx.post(); sfx.ooh(); const m = $('#mmsg'); m.textContent = 'DİREK!'; setTimeout(() => { if (W.phase !== 'done') m.textContent = ''; }, 700); }
       else if (Math.abs(b.x) < GOAL_W + 0.3 && b.z >= 2.44 && b.z < 2.7) { b.vy = -b.vy * 0.5; b.y = 0.05; b.vz = -2; sfx.post(); }
       else { sfx.ooh(); return endMoment(W, 'out', b.z >= 2.44 && Math.abs(b.x) < GOAL_W + 2 ? 'ÜSTTEN AUT' : 'AUT'); }
@@ -903,11 +1349,11 @@ function step(dt) {
       if (e._k === b.kickT && e.team === 1) continue; e._k = b.kickT;
       const sp2 = Math.hypot(b.vx, b.vy);
       if (e.team === 0) {
-        const ctl = e.isYou ? (b.drib && b.kicker === e ? 99 : 13 + p.stats.DRI * 0.12) : 17 + (M.ourS - 55) * 0.12;
+        const ctl = e.isYou ? (b.drib && b.kicker === e ? 99 : 13 + p.stats.DRI * 0.12 + (has('kontrol') ? 6 : 0)) : 17 + (M.ourS - 55) * 0.12;
         if (sp2 < ctl || e.isYou && sp2 < ctl + 4 && Math.random() < 0.5) { b.owner = e; b.ownT = 0; if (e.isYou) { W.phase = 'aim'; W.aim = null; $('#tLoft').hidden = W.type === 'penalti'; } break; }
         else { b.vx *= 0.55; b.vy *= 0.55; b.kicker = e; b.kickT = W.t; }
       } else {
-        if (sp2 < 10 + d * 7 || Math.random() < (e.wall ? 0.7 : 0.18 + d * 0.25)) { b.owner = e; e.kickT = performance.now(); return endMoment(W, 'lost', e.wall ? 'BARAJA ÇARPTI' : 'TOP KESİLDİ'); }
+        if (sp2 < 10 + d * 7 || Math.random() < (e.wall ? (has('frikik') ? 0.42 : 0.7) : 0.18 + d * 0.25)) { b.owner = e; e.kickT = performance.now(); return endMoment(W, 'lost', e.wall ? 'BARAJA ÇARPTI' : 'TOP KESİLDİ'); }
         const a = Math.atan2(b.vy, b.vx) + rand(-0.9, 0.9); b.vx = Math.cos(a) * sp2 * 0.5; b.vy = Math.sin(a) * sp2 * 0.5; b.kicker = e; b.kickT = W.t; b.spin = 0;
       }
     }
@@ -927,21 +1373,24 @@ function step(dt) {
   } else if (b.owner.team === 0) moveTo(you, clamp(you.x * 0.65, -13, 13), Math.max(8, Math.min(you.y, b.owner.y) - 9), ys, gdt);
   for (const m of W.mates) {
     if (b.owner === m) {
-      m.vx = m.vy = 0; m.face = Math.atan2(you.y - m.y, you.x - m.x);
+      m.vx = m.vy = 0;
+      if (m.planK !== b.kickT) { m.planK = b.kickT; m.plan = Math.hypot(m.x, m.y) < 19 && Math.random() < 0.5 + (M.ourS - 60) / 100 ? 'shoot' : 'pass'; }
+      if (m.plan === 'shoot') { m.face = Math.atan2(-m.y, -m.x); if (b.ownT > 0.35) { const tx = (W.gk.x > 0 ? -1 : 1) * rand(1.8, 3.2); kick(W, m, Math.atan2(-m.y, tx - m.x), 21 + (M.ourS - 60) * 0.12, 0, false, true); } continue; }
+      m.face = Math.atan2(you.y - m.y, you.x - m.x);
       if (b.ownT > 0.45) { const lx = you.x + you.vx * 0.7, ly = you.y + you.vy * 0.7, dist = Math.hypot(lx - m.x, ly - m.y); kick(W, m, Math.atan2(ly - m.y, lx - m.x), clamp(dist * 1.05 + 7, 10, 22), 0, false, true); }
     } else if (!b.owner) {
       const ip = intercept(m, b, 7.4), yi = intercept(you, b, ys);
       if (ip.t < yi.t - 0.15) moveTo(m, ip.x, ip.y, 7.4, gdt); else moveTo(m, clamp(m.x, -28, 28), clamp(Math.min(m.y, you.y - 2), 6, 50), 5, gdt);
     } else moveTo(m, clamp(m.x + (m.x > you.x ? 0.5 : -0.5), -28, 28), clamp(you.y - 4, 6, 50), 5.5, gdt);
   }
-  const react = W.t - b.kickT > 0.36 - d * 0.16;
+  const react = W.t - b.kickT > 0.36 - d * 0.16 + (has('hayalet') && b.kicker === you ? 0.25 : 0);
   const chasers = !b.owner && react ? W.defs.filter(e => !e.wall || W.t - b.kickT > 0.25).map(e => [e, intercept(e, b, ds)]).sort((a, c) => a[1].t - c[1].t).slice(0, d > 0.6 ? 2 : 1).map(x => x[0]) : [];
   for (const e of W.defs) {
     if (e.wall && W.phase === 'aim') continue;
     if (b.owner === you && e.presser) {
       moveTo(e, you.x, you.y, (1.6 + d * 2.2) * (1 - p.stats.PHY / 300), gdt, 8);
       if (Math.hypot(e.x - you.x, e.y - you.y) < 1.15 && e.stun <= 0) {
-        if (Math.random() < 0.5 + d * 0.4 - p.stats.DRI * 0.004) { b.owner = e; e.kickT = performance.now(); return endMoment(W, 'lost', 'TOPU KAPTIRDIN'); }
+        if (Math.random() < 0.5 + d * 0.4 - p.stats.DRI * 0.004 - (has('calim') ? 0.3 : 0)) { b.owner = e; e.kickT = performance.now(); return endMoment(W, 'lost', 'TOPU KAPTIRDIN'); }
         e.stun = 1.2; e.vx = -e.vx; e.vy = -e.vy; toast('Çalımladın!');
       }
       continue;
@@ -1128,7 +1577,7 @@ function render3D(dt, now) {
   if (!W) { const t = now / 9000; R.cam.position.set(Math.sin(t) * 38, 34, 62 + Math.cos(t) * 10); R.cam.lookAt(0, 0, 18); R.camPos.copy(R.cam.position); R.camLook.set(0, 0, 18); R.r.render(R.scene, R.cam); return; }
   const b = W.ball, you = W.you;
   // oyuncular
-  const celebrate = W.phase === 'done' && W.outcome === 'goal';
+  const celebrate = W.phase === 'done' && (W.outcome === 'goal' || W.outcome === 'assist');
   animPlayer(you, dt, now, celebrate ? 'celebrate' : W.phase === 'done' ? 'sad' : null);
   W.mates.forEach(e => animPlayer(e, dt, now, celebrate ? 'celebrate' : null)); W.defs.forEach(e => animPlayer(e, dt, now, celebrate ? 'sad' : null)); animPlayer(W.gk, dt, now, celebrate ? 'sad' : null);
   if (celebrate) { you.x += Math.cos(you.face) * dt * 2.5; you.y += Math.sin(you.face) * dt * 2.5; }
@@ -1148,8 +1597,8 @@ function render3D(dt, now) {
   // nişan yolu
   if (W.aim && b.owner === you && W.aim.power > 0.03) {
     const st = P().stats, a = W.aim, drib = !W.loft && a.power < 0.28, spd = drib ? 2.5 + a.power * 20 : (5 + a.power * (17 + st.SHO * 0.13)) * (W.loft ? 0.72 : 1);
-    const pts = []; simBall({ x: b.x, y: b.y, z: W.loft ? 0.05 : 0, vx: Math.cos(a.ang) * spd, vy: Math.sin(a.ang) * spd, vz: W.loft ? 4.5 + a.power * 6.5 : 0, spin: a.spin, drib }, 160, 0.02, pts);
-    const frac = M.pathAd || drib ? 1 : 0.22 + st.PAS / 100 * 0.3, n = Math.max(3, Math.floor(pts.length * frac));
+    const pts = []; simBall({ x: b.x, y: b.y, z: W.loft ? 0.05 : 0, vx: Math.cos(a.ang) * spd, vy: Math.sin(a.ang) * spd, vz: W.loft ? 4.5 + a.power * 6.5 : 0, spin: a.spin, drib, cm: myCurve(W) }, 160, 0.02, pts);
+    const frac = pathFrac(drib), n = Math.max(3, Math.floor(pts.length * frac));
     const v3 = [new T3.Vector3(b.x, 0.25, b.y)]; for (let i = 2; i < n; i += 2) v3.push(new T3.Vector3(pts[i][0], 0.2 + pts[i][2], pts[i][1]));
     if (v3.length < 2) v3.push(new T3.Vector3(b.x + Math.cos(a.ang), 0.25, b.y + Math.sin(a.ang)));
     if (R.aimMesh) { R.scene.remove(R.aimMesh); R.aimMesh.geometry.dispose(); }
@@ -1185,7 +1634,7 @@ function render2D() {
   for (let y = -10; y < 70; y += 5) { g.fillStyle = (Math.floor(y / 5) % 2) ? '#2f8a4a' : '#2a7d43'; g.fillRect(-40, y, 80, 5); }
   g.strokeStyle = '#ffffffd9'; g.lineWidth = 0.14; g.strokeRect(-34, 0, 68, 52.5); g.strokeRect(-20.16, 0, 40.32, 16.5); g.strokeRect(-9.16, 0, 18.32, 5.5);
   g.strokeStyle = '#fff'; g.lineWidth = 0.22; g.beginPath(); g.moveTo(-GOAL_W, 0); g.lineTo(-GOAL_W, -2); g.lineTo(GOAL_W, -2); g.lineTo(GOAL_W, 0); g.stroke();
-  if (W.aim && b.owner === W.you && W.aim.power > 0.03) { const st = P().stats, a = W.aim, drib = !W.loft && a.power < 0.28, sp = drib ? 2.5 + a.power * 20 : (5 + a.power * (17 + st.SHO * 0.13)) * (W.loft ? 0.72 : 1), pts = []; simBall({ x: b.x, y: b.y, z: 0, vx: Math.cos(a.ang) * sp, vy: Math.sin(a.ang) * sp, vz: W.loft ? 4.5 + a.power * 6.5 : 0, spin: a.spin, drib }, 160, 0.02, pts); const n = Math.max(2, Math.floor(pts.length * (M.pathAd || drib ? 1 : 0.22 + st.PAS / 100 * 0.3))); g.strokeStyle = drib ? '#7fe0ff' : a.power > 0.55 ? '#ff5a4e' : '#f2c14e'; g.lineWidth = 0.35; g.beginPath(); g.moveTo(b.x, b.y); for (let i = 0; i < n; i++) g.lineTo(pts[i][0], pts[i][1] - pts[i][2] * 0.5); g.stroke(); }
+  if (W.aim && b.owner === W.you && W.aim.power > 0.03) { const st = P().stats, a = W.aim, drib = !W.loft && a.power < 0.28, sp = drib ? 2.5 + a.power * 20 : (5 + a.power * (17 + st.SHO * 0.13)) * (W.loft ? 0.72 : 1), pts = []; simBall({ x: b.x, y: b.y, z: 0, vx: Math.cos(a.ang) * sp, vy: Math.sin(a.ang) * sp, vz: W.loft ? 4.5 + a.power * 6.5 : 0, spin: a.spin, drib, cm: myCurve(W) }, 160, 0.02, pts); const n = Math.max(2, Math.floor(pts.length * pathFrac(drib))); g.strokeStyle = drib ? '#7fe0ff' : a.power > 0.55 ? '#ff5a4e' : '#f2c14e'; g.lineWidth = 0.35; g.beginPath(); g.moveTo(b.x, b.y); for (let i = 0; i < n; i++) g.lineTo(pts[i][0], pts[i][1] - pts[i][2] * 0.5); g.stroke(); }
   const ents = [...W.mates.map(e => [e, M.ourKit.shirt]), ...W.defs.map(e => [e, M.oppKit.shirt]), [W.gk, '#f2c14e'], [W.you, M.ourKit.shirt]];
   for (const [e, c1] of ents) { g.fillStyle = c1; g.beginPath(); g.arc(e.x, e.y, 0.8, 0, 7); g.fill(); g.strokeStyle = '#000'; g.lineWidth = 0.1; g.stroke(); if (e.isYou) { g.strokeStyle = '#f2c14e'; g.lineWidth = 0.16; g.beginPath(); g.arc(e.x, e.y, 1.35, 0, 7); g.stroke(); } }
   g.fillStyle = '#fff'; g.beginPath(); g.arc(b.x, b.y - b.z * 0.5, 0.32 * (1 + b.z * 0.12), 0, 7); g.fill();
@@ -1197,43 +1646,80 @@ function loop(now) {
   if (M) { if (R.use3D) render3D(dt, now); else render2D(); }
   raf = requestAnimationFrame(loop);
 }
+function finalize(f, r) {
+  const p = P(), s = S.season, [h, a] = f, home = h === p.club, opp = home ? a : h;
+  const gh = home ? r.my : r.them, ga = home ? r.them : r.my;
+  simGame(h, a, gh, ga); s.fixtures[s.week].forEach(([x, y]) => { if (x !== h || y !== a) simGame(x, y); });
+  const res = r.my > r.them ? 'G' : r.my < r.them ? 'M' : 'B'; (s.form = s.form || []).push(res);
+  s.week++; s.apps++; s.goals += r.goals; s.assists = (s.assists || 0) + r.assists; s.ratings.push(+r.rating.toFixed(1));
+  p.totalApps++; p.totalGoals += r.goals; p.totalAssists = (p.totalAssists || 0) + r.assists;
+  const sal = p.contract.salary;
+  const money = { 'Maaş': sal, 'Gol primi': r.goals * Math.round(sal * 0.3 + 5000), 'Asist primi': r.assists * Math.round(sal * 0.15 + 2500), 'Galibiyet primi': res === 'G' ? Math.round(sal * 0.5) : 0, 'Sponsor': Math.floor(p.followers / 10000) * 1000 + (owns('hiper') ? 10000 : 0) };
+  let pay = Object.values(money).reduce((x, y) => x + y, 0); if (has('midas')) { money['Midas ×1,5'] = Math.round(pay * 0.5); pay = Math.round(pay * 1.5); }
+  const xpParts = { 'Maç': 35, 'Gol': r.goals * 45, 'Asist': r.assists * 30, 'Maç puanı': Math.round(r.rating * 8), 'Galibiyet': res === 'G' ? 20 : 0 };
+  const xp = Math.round(Object.values(xpParts).reduce((x, y) => x + y, 0) * p.xpBoost * (owns('kosk') ? 1.1 : 1) * (r.sim ? 0.7 : 1));
+  p.xp += xp; p.coins += pay; p.followers += Math.round((r.goals * 900 + r.assists * 400) * (TEAMS[p.club].str / 60) + r.rating * 40);
+  p.moral = clamp(p.moral + (res === 'G' ? 6 : res === 'M' ? -6 : 0) + (r.goals ? 4 : 0), 0, 100);
+  p.trust = clamp(p.trust + (r.rating >= 7.5 ? 8 : r.rating >= 6.5 ? 3 : r.rating < 5.5 ? -6 : 0), 0, 100);
+  p.maxOvr = Math.max(p.maxOvr || 0, ovr(p)); S.dry = r.goals + r.assists ? 0 : (S.dry || 0) + 1; S.last = { goals: r.goals, assists: r.assists, res, opp };
+  const nm = p.first + ' ' + p.last, us = TEAMS[p.club].name, op = TEAMS[opp].name, sc = `${us} ${r.my}-${r.them} ${op}`, rt = r.rating.toFixed(1);
+  if (r.goals >= 3) news('Son Dakika', pick([`HAT-TRICK! ${nm}, ${op} savunmasını darmadağın etti.`, `Gecenin adı ${p.last}: ${r.goals} gol! ${sc}.`]));
+  else if (r.goals === 2) news('Son Dakika', pick([`Çifte gol! ${nm}, ${op} ağlarını 2 kez sarstı.`, `${p.last} durdurulamıyor: 2 gol, maç puanı ${rt}.`]));
+  else if (r.goals === 1) news('Maç Merkezi', pick([`${sc}. Golü ${p.last} attı${r.assists ? ', bir de asist yaptı' : ''}. Maç puanı ${rt}.`, `${p.last} yine sahnede! ${sc}.`]));
+  else if (r.assists) news('Maç Merkezi', pick([`${sc}. ${p.last} ${r.assists} asistle oyunun beyni oldu.`, `Pas ustası ${p.last}: ${r.assists} asist! ${sc}.`]));
+  else if (r.rating < 5.5) news('Tribün Sesi', pick([`Taraftar ${p.last}'dan memnun değil: "Bu performansla forma giyemez."`, `${sc}. ${p.last} kötü bir gece geçirdi.`, `Tribünlerden ${p.last}'a ıslık! Maç puanı ${rt}.`]));
+  else news('Maç Merkezi', pick([`${sc}. ${p.last} için maç puanı ${rt}.`, `${p.last} gol atamadı ama mücadelesiyle göz doldurdu. ${sc}.`]));
+  const midW = s.week === Math.floor(s.fixtures.length / 2) + 1;
+  if (midW) { genOffers(); S.window = true; } else if (S.window && s.week > Math.floor(s.fixtures.length / 2) + 2) { S.window = false; S.offers = []; }
+  persist();
+  return { res, gh, ga, h, a, xp, pay, money, midW, rating: r.rating, goals: r.goals, assists: r.assists, sim: r.sim };
+}
+function resultHtml(o, played) {
+  const rows = Object.entries(o.money).filter(([, v]) => v).map(([k, v]) => `<dt>${k}</dt><dd>+${eur(v)}</dd>`).join('');
+  return `<span class="eyebrow">${o.sim ? 'Simülasyon · ' : ''}Maç sonu · ${o.res === 'G' ? 'galibiyet' : o.res === 'M' ? 'mağlubiyet' : 'beraberlik'}</span><div class="big">${o.gh} - ${o.ga}</div><p style="text-align:center">${esc(TEAMS[o.h].name)} – ${esc(TEAMS[o.a].name)}</p>
+    <dl class="kv"><dt>Gol / Asist</dt><dd>${o.goals} / ${o.assists}</dd><dt>Maç puanı</dt><dd>${o.rating.toFixed(1)}</dd><dt>XP</dt><dd>+${o.xp}${o.sim ? ' (simülasyon)' : ''}</dd>${rows}<dt><b>Toplam kazanç</b></dt><dd><b>+${eur(o.pay)}</b></dd></dl>
+    ${played && o.res === 'M' ? '<button class="btn ad" id="replay">▶ Video İzle · Maçı Yeniden Oyna</button>' : ''}
+    <button class="btn ad" id="dbl">▶ Video İzle · Kazancı 2 Katına Çıkar</button><button class="btn" id="toHub">Devam</button>`;
+}
+function afterResult(o, played) {
+  if (played) { $('#mpanel').hidden = true; mEl.hidden = true; document.body.style.overflow = ''; M = null; sfx.crowd(0, 0.5); } else closeModal();
+  show('hub'); if (o.midW && S.offers.length) toast('Transfer penceresi açıldı!');
+  const sc = nextStory('post') || nextStory('any'); if (sc) setTimeout(() => playStory(sc, () => renderHub()), 250);
+}
+function bindResult(o, played, snap, f) {
+  $('#dbl').onclick = async () => { if (await Ads.rewarded('Maç kazancını 2 katına çıkar')) { P().coins += o.pay; persist(); $('#dbl').disabled = true; $('#dbl').textContent = '+' + eur(o.pay) + ' eklendi'; } };
+  const rp = $('#replay'); if (rp) rp.onclick = async () => { if (await Ads.rewarded('Maçı yeniden oyna')) { S = JSON.parse(snap); persist(); $('#mpanel').hidden = true; startMatch(f, true); } };
+  $('#toHub').onclick = () => afterResult(o, played);
+}
 function finishMatch() {
   cancelAnimationFrame(raf); sfx.whistle(); setTimeout(sfx.whistle, 400);
-  const p = P(), s = S.season;
   while (M.oppGoalsGiven < M.oppGoals) { M.them++; M.oppGoalsGiven++; }
   M.my += M.ourExtra;
-  const rating = clamp(6 + M.goals * 1.1 + M.passes * 0.08 - M.fails * 0.35 + (M.my > M.them ? 0.4 : M.my < M.them ? -0.3 : 0) + rand(-0.2, 0.2), 3, 10);
-  const [h, a] = M.f, gh = M.home ? M.my : M.them, ga = M.home ? M.them : M.my;
-  simGame(h, a, gh, ga); s.fixtures[s.week].forEach(([x, y]) => { if (x !== h || y !== a) simGame(x, y); });
-  const res = M.my > M.them ? 'G' : M.my < M.them ? 'M' : 'B'; (s.form = s.form || []).push(res);
-  s.week++; s.apps++; s.goals += M.goals; s.ratings.push(+rating.toFixed(1)); p.totalApps++; p.totalGoals += M.goals;
-  const xp = Math.round((35 + M.goals * 45 + rating * 8 + (res === 'G' ? 20 : 0)) * p.xpBoost);
-  const pay = p.contract.salary + (res === 'G' ? Math.round(p.contract.salary * 0.5) : 0) + Math.floor(p.followers / 10000) * 5;
-  p.xp += xp; p.coins += pay; p.followers += Math.round(M.goals * 900 * (TEAMS[p.club].str / 60) + rating * 40);
-  p.moral = clamp(p.moral + (res === 'G' ? 6 : res === 'M' ? -6 : 0) + (M.goals ? 4 : 0), 0, 100);
-  p.trust = clamp(p.trust + (rating >= 7.5 ? 8 : rating >= 6.5 ? 3 : rating < 5.5 ? -6 : 0), 0, 100);
-  const nm = p.first + ' ' + p.last, us = TEAMS[M.us].name, op = TEAMS[M.opp].name, sc = `${us} ${M.my}-${M.them} ${op}`;
-  if (M.goals >= 3) news('Son Dakika', pick([`HAT-TRICK! ${nm}, ${op} savunmasını darmadağın etti.`, `Gecenin adı ${p.last}: ${M.goals} gol! ${sc}.`]));
-  else if (M.goals === 2) news('Son Dakika', pick([`Çifte gol! ${nm}, ${op} ağlarını 2 kez sarstı.`, `${p.last} durdurulamıyor: 2 gol, maç puanı ${rating.toFixed(1)}.`, `${sc}. Gecenin yıldızı iki golle ${p.last}.`]));
-  else if (M.goals === 1) news('Maç Merkezi', pick([`${sc}. Golü ${p.last} attı, maç puanı ${rating.toFixed(1)}.`, `${p.last} yine sahnede! ${sc}.`, `Genç ${POS[p.pos].name.toLocaleLowerCase('tr-TR')} ${p.last} fileleri havalandırdı. ${sc}.`]));
-  else if (rating < 5.5) news('Tribün Sesi', pick([`Taraftar ${p.last}'dan memnun değil: "Bu performansla forma giyemez."`, `${sc}. ${p.last} kötü bir gece geçirdi.`, `Tribünlerden ${p.last}'a ıslık! Maç puanı ${rating.toFixed(1)}.`, `"${p.last} daha çok çalışmalı" yorumları sosyal medyada gündem oldu.`]));
-  else news('Maç Merkezi', pick([`${sc}. ${p.last} için maç puanı ${rating.toFixed(1)}.`, `${p.last} gol atamadı ama mücadelesiyle göz doldurdu. ${sc}.`, `${sc}. Hoca, ${p.last}'ın performansından memnun.`]));
-  const mid = s.week === Math.floor(s.fixtures.length / 2) + 1;
-  if (mid) { genOffers(); S.window = true; } else if (S.window && s.week > Math.floor(s.fixtures.length / 2) + 2) { S.window = false; S.offers = []; }
-  persist(); sfx.crowd(0.05, 1.5);
-  panel(`<span class="eyebrow">Maç sonu · ${res === 'G' ? 'galibiyet' : res === 'M' ? 'mağlubiyet' : 'beraberlik'}</span><div class="big">${gh} - ${ga}</div><p style="text-align:center">${esc(TEAMS[h].name)} – ${esc(TEAMS[a].name)}</p>
-    <dl class="kv"><dt>Golün</dt><dd>${M.goals}</dd><dt>Maç puanı</dt><dd>${rating.toFixed(1)}</dd><dt>XP</dt><dd>+${xp}</dd><dt>Kazanç</dt><dd>+${pay} altın</dd></dl>
-    <button class="btn ad" id="dbl">Kazancı 2 Katına Çıkar · Reklam</button><button class="btn" id="toHub">Devam</button>`);
-  if (R.use3D) R.r.render(R.scene, R.cam);
-  $('#dbl').onclick = async () => { if (await Ads.rewarded('Maç kazancını 2 katına çıkar')) { p.coins += pay; persist(); $('#dbl').disabled = true; $('#dbl').textContent = '+' + pay + ' altın eklendi'; } };
-  $('#toHub').onclick = () => { $('#mpanel').hidden = true; mEl.hidden = true; document.body.style.overflow = ''; M = null; sfx.crowd(0, 0.5); show('hub'); if (mid && S.offers.length) toast('Transfer penceresi açıldı!'); };
+  const rating = clamp(6 + M.goals * 1.1 + M.assists * 0.6 + M.passes * 0.08 - M.fails * 0.35 + (M.my > M.them ? 0.4 : M.my < M.them ? -0.3 : 0) + rand(-0.2, 0.2), 3, 10);
+  const snap = M.snap, f = M.f;
+  const o = finalize(f, { goals: M.goals, assists: M.assists, rating, my: M.my, them: M.them, sim: false });
+  sfx.crowd(0.05, 1.5); panel(resultHtml(o, true)); if (R.use3D) R.r.render(R.scene, R.cam);
+  bindResult(o, true, snap, f);
+}
+function simulateMatch(f) {
+  const p = P(); p.energy--; if (p.energy === energyMax() - 1) p.energyTs = Date.now();
+  const [h, a] = f, home = h === p.club, opp = home ? a : h, ourS = TEAMS[p.club].str, oppS = TEAMS[opp].str, o = ovr(p), bench = p.trust < 22;
+  const lam = clamp(0.3 + (o - 55) / 55 + (ourS - oppS) / 70 + (has('kahraman') ? 0.15 : 0), 0.05, 2.2) * (bench ? 0.5 : 1);
+  const goals = poisson(lam), assists = poisson(lam * 0.55), extra = poisson(clamp(0.45 + (ourS - oppS) / 30 + (home ? 0.15 : 0), 0.1, 2.5));
+  const my = goals + assists + extra, them = poisson(clamp(1.15 + (oppS - ourS) / 22 + (home ? 0 : 0.15), 0.25, 3.5));
+  const rating = clamp(6 + goals * 0.9 + assists * 0.5 + (my > them ? 0.3 : my < them ? -0.3 : 0) + rand(-0.7, 0.5), 3.5, 9.6);
+  const r = finalize(f, { goals, assists, rating, my, them, sim: true });
+  openModal(resultHtml(r, false)); bindResult(r, false, null, f);
 }
 
 // ================= açılış =================
 function boot(d) {
   S = load(d);
-  if (S && S.player && S.season) { S.season.form = S.season.form || []; $('#bContinue').hidden = false; $('#bNew').classList.add('ghost'); card($('#cardStart'), S.player); }
-  else { S = null; card($('#cardStart'), { first: 'Yusuf', last: 'Kara', nation: 'TR', num: 27, pos: 'ST', stats: { PAC: 91, SHO: 92, PAS: 85, DRI: 87, DEF: 55, PHY: 89 }, av: { skin: SKINS[2], hair: 'kisa', hairC: HAIRC[0], beard: 'kirli' }, club: 'tr0' }); }
+  if (S && S.player && S.season) {
+    if (!S.v || S.v < 3) { const p = S.player; p.coins = Math.round((p.coins || 0) * 300); p.contract.salary = salaryFor(TEAMS[p.club], ovr(p)); p.abil = p.abil || {}; p.items = p.items || {}; p.totalAssists = p.totalAssists || 0; p.maxOvr = ovr(p); p.clubs = p.clubs || [p.club]; p.firstClub = p.firstClub || p.club; S.story = S.story || { seen: {}, flags: {}, log: [], n: 1 }; S.adBox = null; S.v = 3; }
+    S.season.form = S.season.form || []; if (!S.boxStock) refreshBoxStock();
+    $('#bContinue').hidden = false; $('#bContinue').textContent = S.ended ? 'Kariyer Özetine Git' : 'Kariyere Devam'; $('#bNew').classList.add('ghost'); card($('#cardStart'), S.player);
+  } else { S = null; card($('#cardStart'), { first: 'Yusuf', last: 'Kara', nation: 'TR', num: 27, pos: 'ST', stats: { PAC: 91, SHO: 92, PAS: 85, DRI: 87, DEF: 55, PHY: 89 }, av: { skin: SKINS[2], hair: 'kisa', hairC: HAIRC[0], beard: 'kirli' }, club: 'tr0' }); }
   show('start');
 }
 window.claude?.hot?.snapshot?.(() => ({ S }));
