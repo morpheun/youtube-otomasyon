@@ -341,7 +341,7 @@ tr.me td{color:var(--gold);font-weight:800}
     <div class="panel" style="display:flex;flex-direction:column;gap:10px">
       <h3>Ses</h3><div class="chips"><button class="chip" id="sndOn">Açık</button><button class="chip" id="sndOff">Kapalı</button></div>
     </div>
-    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+    <div class="panel" id="namesPanel" style="display:flex;flex-direction:column;gap:10px">
       <h3>Takım İsimleri</h3>
       <div class="chips"><button class="chip" id="nmReal">Gerçek isimler</button><button class="chip" id="nmSafe">Yayın için güvenli</button></div>
       <p>Gerçek kulüp adları tescilli markadır. Oyunu mağazaya ya da reklamlı bir siteye koymadan önce "Yayın için güvenli" seçeneğine geç.</p>
@@ -448,6 +448,7 @@ const TEAMS = {};
 LEAGUES.forEach(L => L.teams.forEach((t, i) => { t.id = L.id + i; t.league0 = L.id; TEAMS[t.id] = t; }));
 const EDIT_KEY = 'yildizYolu.teams', NAME_KEY = 'yildizYolu.names';
 let NAME_MODE = 'real'; try { NAME_MODE = localStorage.getItem(NAME_KEY) || 'real'; } catch (e) {}
+if (window.__CG) NAME_MODE = 'safe'; // yayın sürümünde tescilli kulüp/lig adları gösterilmez
 const baseOf = t => ({ name: NAME_MODE === 'safe' ? t.safe : t.real, short: NAME_MODE === 'safe' ? t.ss : t.rs, c1: t.c10, c2: t.c20 });
 function applyEdits() { LEAGUES.forEach(L => L.name = NAME_MODE === 'safe' ? L.safe : L.real); let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} for (const id in TEAMS) Object.assign(TEAMS[id], baseOf(TEAMS[id]), e[id] || {}); }
 function saveEdit(id, patch) { let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} e[id] = Object.assign(e[id] || {}, patch); try { localStorage.setItem(EDIT_KEY, JSON.stringify(e)); } catch (er) {} Object.assign(TEAMS[id], patch); }
@@ -509,9 +510,33 @@ const sfx = {
 };
 
 // ================= reklam katmanı =================
-// Yayında bu fonksiyon CrazyGames SDK (ad.requestAd('rewarded')) ya da AdMob ödüllü reklamına bağlanır. Şimdilik test reklamı gösterir.
+// CrazyGames sürümünde (window.__CG) gerçek SDK reklamları; başka her yerde test reklamı.
+const CG = { ready: false, sdk: () => window.CrazyGames && window.CrazyGames.SDK };
+async function initCG() {
+  if (!window.__CG || !CG.sdk()) return;
+  try { await Promise.race([CG.sdk().init(), new Promise((_, no) => setTimeout(() => no(new Error('cg timeout')), 6000))]); CG.ready = CG.sdk().environment !== 'disabled'; } catch (e) { CG.ready = false; }
+}
+const cgCall = (mod, fn) => { try { if (CG.ready) CG.sdk()[mod][fn](); } catch (e) {} };
+function cgAd(type, reason) {
+  return new Promise(res => {
+    let done = false; Ads.busy = true;
+    const box = $('#adBody'); $('#adM').hidden = false; box.innerHTML = `<span class="eyebrow">Reklam</span><h3>${esc(reason || 'Reklam')}</h3><div class="adbox"><span>Reklam yükleniyor…</span></div>`;
+    const fin = ok => { if (done) return; done = true; Ads.busy = false; $('#adM').hidden = true; box.innerHTML = ''; try { if (SND.ctx && SND.on) SND.ctx.resume(); } catch (e) {} if (!ok && type === 'rewarded') toast('Şu an reklam bulunamadı, biraz sonra tekrar dene'); res(ok); };
+    try {
+      CG.sdk().ad.requestAd(type, {
+        adStarted: () => { try { if (SND.ctx) SND.ctx.suspend(); } catch (e) {} },
+        adFinished: () => fin(true),
+        adError: () => fin(false),
+      });
+    } catch (e) { fin(false); }
+  });
+}
 const Ads = {
+  busy: false,
+  // ara reklam: maç sonrası doğal molalarda, her 2 maçta bir (ilk maçta asla)
+  async midgame() { if (!CG.ready) return; Ads.n = (Ads.n || 0) + 1; if (Ads.n % 2) return; await cgAd('midgame', 'Kısa bir ara'); },
   rewarded(reason) {
+    if (CG.ready) return cgAd('rewarded', reason);
     return new Promise(res => {
       let n = 5;
       const box = $('#adBody'); $('#adM').hidden = false; box.innerHTML = (`<span class="eyebrow">Reklam · Test</span><h3>${esc(reason)}</h3><div class="adbox"><span id="adTx">Burada ödüllü reklam oynayacak</span><b id="adN" style="font:800 40px var(--display);color:var(--ink)">5</b></div><button class="btn ad" id="adGet" disabled>Ödülü Al</button><button class="btn ghost" id="adSkip">Vazgeç</button>`);
@@ -575,7 +600,7 @@ function avatar(g, av, cx, cy, s, shirt) {
 function card(cv, p) {
   const g = cv.getContext('2d'), w = cv.width, h = cv.height, o = ovr(p);
   g.clearRect(0, 0, w, h);
-  const tier = o >= 85 ? ['#1b1b2e', '#6b5bd6', '#e8e1ff', '#c9b8ff'] : o >= 75 ? ['#5a4310', '#f2c14e', '#fff3c2', '#3a2a06'] : o >= 65 ? ['#5c6670', '#d7dde2', '#ffffff', '#1f262b'] : ['#5a3418', '#c98a5a', '#ffe1c8', '#2a170a'];
+  const tier = o >= 85 ? ['#1b1b2e', '#6b5bd6', '#e8e1ff', '#241a5c'] : o >= 75 ? ['#5a4310', '#f2c14e', '#fff3c2', '#3a2a06'] : o >= 65 ? ['#5c6670', '#d7dde2', '#ffffff', '#1f262b'] : ['#5a3418', '#c98a5a', '#ffe1c8', '#2a170a'];
   const sh = () => { g.beginPath(); g.moveTo(w * 0.5, h * 0.02); g.lineTo(w * 0.94, h * 0.1); g.lineTo(w * 0.94, h * 0.78); g.quadraticCurveTo(w * 0.9, h * 0.9, w * 0.5, h * 0.98); g.quadraticCurveTo(w * 0.1, h * 0.9, w * 0.06, h * 0.78); g.lineTo(w * 0.06, h * 0.1); g.closePath(); };
   const gr = g.createLinearGradient(0, 0, w, h); gr.addColorStop(0, tier[1]); gr.addColorStop(0.5, tier[2]); gr.addColorStop(1, tier[1]);
   sh(); g.fillStyle = gr; g.fill(); g.lineWidth = w * 0.02; g.strokeStyle = tier[0]; g.stroke();
@@ -1437,6 +1462,7 @@ let M = null, raf = 0, last = 0;
 const GOAL_W = 3.66;
 function kitFor(t, other) { let shirt = t.c1, shorts = t.c2; if (other && cdist(shirt, other) < 130) { shirt = t.c2; shorts = t.c1; if (cdist(shirt, other) < 130) { shirt = cdist('#ffffff', other) > 200 ? '#f5f5f5' : '#151515'; shorts = shirt === '#f5f5f5' ? '#151515' : '#f5f5f5'; } } return { shirt, shorts }; }
 function startMatch(f, replay) {
+  cgCall('game', 'gameplayStart');
   const p = P();
   if (!replay) { p.energy--; if (p.energy === energyMax() - 1) p.energyTs = Date.now(); }
   persist(); const snap = JSON.stringify(S);
@@ -1561,7 +1587,7 @@ function endMoment(W, kind, text) {
   const good = kind === 'goal' || kind === 'assist';
   const msg = $('#mmsg'); msg.textContent = text; msg.style.color = good ? 'var(--gold)' : '#fff'; msg.classList.remove('pop'); void msg.offsetWidth; msg.classList.add('pop');
   $('#mhint').textContent = ''; $('#tLoft').hidden = true; $('#tPath').hidden = true; $('#power').hidden = true;
-  if (good) { M.my++; if (kind === 'goal') M.goals++; else M.assists++; updScore(); sfx.roar(); W.celebrate = true; if (R.use3D) confetti3D(); try { navigator.vibrate && navigator.vibrate([30, 40, 60]); } catch (e) {} }
+  if (good) { cgCall('game', 'happytime'); M.my++; if (kind === 'goal') M.goals++; else M.assists++; updScore(); sfx.roar(); W.celebrate = true; if (R.use3D) confetti3D(); try { navigator.vibrate && navigator.vibrate([30, 40, 60]); } catch (e) {} }
   else { M.fails++; if (kind === 'save' || text === 'DİREK!') sfx.ooh(); }
   setTimeout(() => {
     msg.textContent = '';
@@ -1716,7 +1742,7 @@ function openPlacement(W, a) {
     base: shot ? { x: clamp(gx, -5, 5), z: 0.7 } : { x: clamp(end[0], -33, 33), y: clamp(end[1], -1, 59) }, center: { x: clamp((b.x + end[0]) / 2, -20, 20), y: clamp((b.y + end[1]) / 2, 6, 52) }, span: Math.max(30, Math.abs(end[0] - b.x) + 16, (Math.abs(end[1] - b.y) + 16) / 0.82), seed: Math.random() * 100 };
   const el = $('#place'), c = $('#plC'), dpr = Math.min(devicePixelRatio || 1, 2);
   el.hidden = false; $('#plTitle').textContent = shot ? (W.type === 'penalti' ? 'Penaltı · köşeyi seç' : 'Şut · kalede hedefi seç') : (W.loft ? 'Havadan pas · hedefi seç' : 'Pas · hedefi seç');
-  $('#plHint').textContent = 'Parmağını sürükle, nişangâh istediğin yerdeyken bırak';
+  $('#plHint').textContent = matchMedia('(pointer:fine)').matches ? 'Nişangâhı fareyle hedefe götür, tıkla' : 'Parmağını sürükle, nişangâh istediğin yerdeyken bırak';
   const r = c.getBoundingClientRect(); c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); PL.dpr = dpr;
   tone(520, 0.12, 'sine', 0.06, 880);
   const loop = () => { if (!PL.open) return; drawPlacement(); PL.raf = requestAnimationFrame(loop); }; loop();
@@ -2034,7 +2060,7 @@ function render2D() {
 
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
-  if (M && M.W) step(dt);
+  if (M && M.W && !Ads.busy) step(dt);
   if (M) { if (R.use3D) render3D(dt, now); else render2D(); }
   raf = requestAnimationFrame(loop);
 }
@@ -2076,7 +2102,8 @@ function resultHtml(o, played) {
 function afterResult(o, played) {
   if (played) { $('#mpanel').hidden = true; mEl.hidden = true; document.body.style.overflow = ''; M = null; sfx.crowd(0, 0.5); } else closeModal();
   show('hub'); if (o.midW && S.offers.length) toast('Transfer penceresi açıldı!');
-  const sc = nextStory('post') || nextStory('any'); if (sc) setTimeout(() => playStory(sc, () => renderHub()), 250);
+  const sc = nextStory('post') || nextStory('any');
+  Ads.midgame().then(() => { if (sc) setTimeout(() => playStory(sc, () => renderHub()), 250); });
 }
 function bindResult(o, played, snap, f) {
   $('#dbl').onclick = async () => { if (await Ads.rewarded('Maç kazancını 2 katına çıkar')) { P().coins += o.pay; persist(); $('#dbl').disabled = true; $('#dbl').textContent = '+' + eur(o.pay) + ' eklendi'; } };
@@ -2084,6 +2111,7 @@ function bindResult(o, played, snap, f) {
   $('#toHub').onclick = () => afterResult(o, played);
 }
 function finishMatch() {
+  cgCall('game', 'gameplayStop');
   cancelAnimationFrame(raf); sfx.whistle(); setTimeout(sfx.whistle, 400);
   while (M.oppGoalsGiven < M.oppGoals) { M.them++; M.oppGoalsGiven++; }
   M.my += M.ourExtra;
@@ -2117,7 +2145,7 @@ function boot(d) {
 window.claude?.hot?.snapshot?.(() => ({ S }));
 window.__yy = { get S() { return S; }, get M() { return M; }, get R() { return R; }, step: dt => step(dt), get PL() { return PL; }, plFire: () => plFire(), plPoint: (x, yz) => { const c = $('#plC'), r = c.getBoundingClientRect(), m = plMap(), [px, py] = m.to(x, yz); return [r.left + px * r.width / m.W, r.top + py * r.height / m.H]; }, render: (dt, now) => R.use3D ? render3D(dt, now) : render2D(),
   toScreen: (x, y) => { if (R.use3D) { const v = new THREE.Vector3(x, 0.2, y).project(R.cam); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; } const s = R.scale2, c = R.cam2; return [innerWidth / 2 + (x - c.x) * s, innerHeight / 2 + (y - c.y) * s]; } };
-const go = d => { (document.fonts && document.fonts.load ? Promise.all([document.fonts.load('800 20px "Saira Condensed"')]).catch(() => {}) : Promise.resolve()).then(() => boot(d)); };
+const go = d => { Promise.all([initCG(), document.fonts && document.fonts.load ? document.fonts.load('800 20px "Saira Condensed"').catch(() => {}) : 0]).then(() => { if (window.__CG) $('#namesPanel').hidden = true; boot(d); cgCall('game', 'loadingStop'); }); };
 window.claude?.hot?.ready ? window.claude.hot.ready(go) : go(window.claude?.hot?.data ?? {});
 })();
 </script>
