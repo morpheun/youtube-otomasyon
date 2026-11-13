@@ -1,0 +1,9 @@
+{
+  "appId": "com.yirmiyedistudios.starpath",
+  "appName": "Star Path",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#080e0c",
+    "allowMixedContent": false
+  }
+}

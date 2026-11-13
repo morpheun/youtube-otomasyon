@@ -463,7 +463,7 @@ const TEAMS = {};
 LEAGUES.forEach(L => L.teams.forEach((t, i) => { t.id = L.id + i; t.league0 = L.id; TEAMS[t.id] = t; }));
 const EDIT_KEY = 'yildizYolu.teams', NAME_KEY = 'yildizYolu.names';
 let NAME_MODE = 'real'; try { NAME_MODE = localStorage.getItem(NAME_KEY) || 'real'; } catch (e) {}
-if (window.__CG) NAME_MODE = 'safe'; // yayın sürümünde tescilli kulüp/lig adları gösterilmez
+if (window.__CG || window.__APP) NAME_MODE = 'safe'; // yayın sürümünde tescilli kulüp/lig adları gösterilmez
 const baseOf = t => ({ name: NAME_MODE === 'safe' ? t.safe : t.real, short: NAME_MODE === 'safe' ? t.ss : t.rs, c1: t.c10, c2: t.c20 });
 function applyEdits() { LEAGUES.forEach(L => L.name = NAME_MODE === 'safe' ? L.safe : L.real); let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} for (const id in TEAMS) Object.assign(TEAMS[id], baseOf(TEAMS[id]), e[id] || {}); }
 function saveEdit(id, patch) { let e = {}; try { e = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (er) {} e[id] = Object.assign(e[id] || {}, patch); try { localStorage.setItem(EDIT_KEY, JSON.stringify(e)); } catch (er) {} Object.assign(TEAMS[id], patch); }
@@ -546,12 +546,52 @@ function cgAd(type, reason) {
     } catch (e) { fin(false); }
   });
 }
+
+// Android uygulaması (window.__APP): Google AdMob ödüllü + geçiş reklamları (Capacitor eklentisi, cap.js içinde gelir)
+const ADMOB_IDS = Object.assign({ reward: 'ca-app-pub-3940256099942544/5224354917', inter: 'ca-app-pub-3940256099942544/1033173712' }, window.__ADMOB || {});
+const AM = { ready: false, p: null, loaded: { reward: false, inter: false } };
+async function initAdMob() {
+  if (!window.__APP || !window.__cap) return;
+  const p = window.__cap.AdMob; if (!p) return; AM.p = p;
+  try {
+    await p.initialize({});
+    try { const ci = await p.requestConsentInfo(); if (ci && ci.isConsentFormAvailable && ci.status === 'REQUIRED') await p.showConsentForm(); } catch (e) {}
+    AM.ready = true; amLoad('reward'); amLoad('inter');
+  } catch (e) { AM.ready = false; }
+}
+async function amLoad(k) {
+  if (!AM.p || AM.loaded[k]) return AM.loaded[k];
+  try { if (k === 'reward') await AM.p.prepareRewardVideoAd({ adId: ADMOB_IDS.reward }); else await AM.p.prepareInterstitial({ adId: ADMOB_IDS.inter }); AM.loaded[k] = true; } catch (e) { AM.loaded[k] = false; }
+  return AM.loaded[k];
+}
+function amAd(k, reason) {
+  return new Promise(async res => {
+    let done = false, got = false; const hs = []; Ads.busy = true;
+    const box = $('#adBody'); $('#adM').hidden = false; box.innerHTML = `<span class="eyebrow">${EN ? 'Ad' : 'Reklam'}</span><h3>${esc(reason || (EN ? 'Ad' : 'Reklam'))}</h3><div class="adbox"><span>${EN ? 'Loading ad…' : 'Reklam yükleniyor…'}</span></div>`;
+    const fin = ok => { if (done) return; done = true; Ads.busy = false; hs.forEach(h => { try { h.remove(); } catch (e) {} }); $('#adM').hidden = true; box.innerHTML = ''; try { if (SND.ctx && SND.on) SND.ctx.resume(); } catch (e) {} AM.loaded[k] = false; setTimeout(() => amLoad(k), 500); if (!ok && k === 'reward') toast(EN ? 'No ad available right now, try again in a moment' : 'Şu an reklam bulunamadı, biraz sonra tekrar dene'); res(ok); };
+    const on = async (ev, f) => { try { hs.push(await AM.p.addListener(ev, f)); } catch (e) {} };
+    const ok = await Promise.race([amLoad(k), new Promise(r => setTimeout(() => r(false), 9000))]);
+    if (!ok) return fin(false);
+    try { if (SND.ctx) SND.ctx.suspend(); } catch (e) {}
+    if (k === 'reward') {
+      await on('onRewardedVideoAdReward', () => { got = true; });
+      await on('onRewardedVideoAdDismissed', () => setTimeout(() => fin(got), 150));
+      await on('onRewardedVideoAdFailedToShow', () => fin(false));
+      try { const r = await AM.p.showRewardVideoAd(); if (r && r.amount > 0) got = true; } catch (e) { fin(false); }
+    } else {
+      await on('interstitialAdDismissed', () => fin(true));
+      await on('interstitialAdFailedToShow', () => fin(false));
+      try { await AM.p.showInterstitial(); } catch (e) { fin(false); }
+    }
+  });
+}
 const Ads = {
   busy: false,
   // ara reklam: maç sonrası doğal molalarda, her 2 maçta bir (ilk maçta asla)
-  async midgame() { if (!CG.ready) return; Ads.n = (Ads.n || 0) + 1; if (Ads.n % 2) return; await cgAd('midgame', (EN ? "A short break" : 'Kısa bir ara')); },
+  async midgame() { if (!CG.ready && !AM.ready) return; Ads.n = (Ads.n || 0) + 1; if (Ads.n % 2) return; if (AM.ready) await amAd('inter', EN ? 'A short break' : 'Kısa bir ara'); else await cgAd('midgame', (EN ? "A short break" : 'Kısa bir ara')); },
   rewarded(reason) {
     if (CG.ready) return cgAd('rewarded', reason);
+    if (AM.ready) return amAd('reward', reason);
     return new Promise(res => {
       let n = 5;
       const box = $('#adBody'); $('#adM').hidden = false; box.innerHTML = ((EN ? `<span class="eyebrow">Ad · Test</span><h3>${esc(reason)}</h3><div class="adbox"><span id="adTx">A rewarded ad will play here</span><b id="adN" style="font:800 40px var(--display);color:var(--ink)">5</b></div><button class="btn ad" id="adGet" disabled>Claim Reward</button><button class="btn ghost" id="adSkip">Cancel</button>` : `<span class="eyebrow">Reklam · Test</span><h3>${esc(reason)}</h3><div class="adbox"><span id="adTx">Burada ödüllü reklam oynayacak</span><b id="adN" style="font:800 40px var(--display);color:var(--ink)">5</b></div><button class="btn ad" id="adGet" disabled>Ödülü Al</button><button class="btn ghost" id="adSkip">Vazgeç</button>`));
@@ -2174,7 +2214,22 @@ function boot(d) {
 window.claude?.hot?.snapshot?.(() => ({ S }));
 window.__yy = { get S() { return S; }, get M() { return M; }, get R() { return R; }, step: dt => step(dt), get PL() { return PL; }, plFire: () => plFire(), plPoint: (x, yz) => { const c = $('#plC'), r = c.getBoundingClientRect(), m = plMap(), [px, py] = m.to(x, yz); return [r.left + px * r.width / m.W, r.top + py * r.height / m.H]; }, render: (dt, now) => R.use3D ? render3D(dt, now) : render2D(),
   toScreen: (x, y) => { if (R.use3D) { const v = new THREE.Vector3(x, 0.2, y).project(R.cam); return [(v.x + 1) / 2 * innerWidth, (1 - v.y) / 2 * innerHeight]; } const s = R.scale2, c = R.cam2; return [innerWidth / 2 + (x - c.x) * s, innerHeight / 2 + (y - c.y) * s]; } };
-const go = d => { Promise.all([initCG(), document.fonts && document.fonts.load ? document.fonts.load('800 20px "Saira Condensed"').catch(() => {}) : 0]).then(() => { if (window.__CG) $('#namesPanel').hidden = true; boot(d); cgCall('game', 'loadingStop'); }); };
+
+// Android geri tuşu: açık pencereyi kapat, alt ekrandan geri dön, ana sayfada uygulamayı arka plana al
+function appBack() {
+  const A = window.__APP && window.__cap && window.__cap.App; if (!A) return;
+  A.addListener('backButton', () => {
+    const vis = sel => { const e = $(sel); return e && !e.hidden; };
+    if (Ads.busy) return;
+    if (vis('#cine')) { const sk = $('#cineSkip'); if (sk) sk.click(); return; }
+    if (vis('#modal')) { const b = [...document.querySelectorAll('#modal button')].reverse().find(x => x.offsetParent && /ghost/.test(x.className)); if (b) b.click(); return; }
+    if (M) return; // maç sırasında geri tuşu yok sayılır
+    const bk = [...document.querySelectorAll('.screen:not([hidden]) .back')].find(x => x.offsetParent); if (bk) { bk.click(); return; }
+    const hub = document.querySelector('#tabs [data-tab="hub"]'); if (hub && hub.offsetParent && !hub.classList.contains('on')) { hub.click(); return; }
+    try { A.minimizeApp(); } catch (e) {}
+  });
+}
+const go = d => { Promise.all([initCG(), initAdMob(), document.fonts && document.fonts.load ? document.fonts.load('800 20px "Saira Condensed"').catch(() => {}) : 0]).then(() => { if (window.__CG || window.__APP) $('#namesPanel').hidden = true; appBack(); boot(d); cgCall('game', 'loadingStop'); }); };
 window.claude?.hot?.ready ? window.claude.hot.ready(go) : go(window.claude?.hot?.data ?? {});
 })();
 </script>

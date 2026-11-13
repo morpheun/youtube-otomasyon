@@ -1,0 +1,66 @@
+name: Android (Google Play)
+
+# futbol/index.html veya mobil/ değişince Google Play paketi (.aab) otomatik derlenir.
+# İmza için iki gizli ayar gerekir: ANDROID_KEYSTORE_B64 ve ANDROID_KEYSTORE_PASSWORD.
+# Yoksa paket imzasız derlenir (Play'e yüklenemez ama derlemenin çalıştığı görülür).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'futbol/index.html'
+      - 'futbol/build_crazygames.py'
+      - 'futbol/vendor/**'
+      - 'mobil/**'
+      - '.github/workflows/android.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Oyun dosyası + Capacitor
+        working-directory: mobil
+        run: |
+          npm ci
+          npx esbuild cap-entry.js --bundle --format=iife --minify --target=es2019 --outfile=cap.js
+          python3 ../futbol/build_crazygames.py android
+          npx cap sync android
+
+      - name: İmza anahtarı
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > "$RUNNER_TEMP/upload.jks"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::ANDROID_KEYSTORE_B64 yok; paket imzasız derleniyor"
+          fi
+
+      - name: Derle (.aab)
+        working-directory: mobil/android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          VERSION_CODE: ${{ github.run_number }}
+          VERSION_NAME: 1.0.${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon bundleRelease
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: star-path-google-play-${{ github.run_number }}
+          path: mobil/android/app/build/outputs/bundle/release/*.aab
+          if-no-files-found: error

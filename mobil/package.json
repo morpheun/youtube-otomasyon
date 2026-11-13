@@ -1,0 +1,20 @@
+{
+  "name": "star-path-android",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Yıldız Yolu / Star Path - Android uygulaması (Capacitor)",
+  "scripts": {
+    "web": "python3 ../futbol/build_crazygames.py android",
+    "sync": "npm run web && npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor-community/admob": "^8.3.0",
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
+    "esbuild": "^0.25.12"
+  }
+}
