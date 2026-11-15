@@ -7,7 +7,12 @@ import anthropic
 STORY_SCHEMA = {
     "type": "object",
     "properties": {
-        "title": {"type": "string", "description": "YouTube başlığı, merak uyandıran, en fazla 80 karakter, emoji olabilir"},
+        "hook": {"type": "string", "description": "Videonun ilk cümlesi (kanca). 1. sahnenin anlatımı TAM OLARAK bu cümleyle başlamalı."},
+        "title_options": {
+            "type": "array", "items": {"type": "string"},
+            "description": "5 farklı başlık adayı. Her biri en fazla 40 karakter, sayı/saat/isim içersin, #shorts yazma.",
+        },
+        "thumb_text": {"type": "string", "description": "Videonun ilk 2 saniyesinde ekranda duracak 2-3 kelimelik yazı. Başlıktaki kelimeleri TEKRAR ETMESİN."},
         "description": {"type": "string", "description": "2-3 cümlelik YouTube açıklaması + hashtagler"},
         "tags": {"type": "array", "items": {"type": "string"}},
         "summary": {"type": "string", "description": "Hikayenin tek cümlelik özeti (tekrarı önlemek için kaydedilir)"},
@@ -31,18 +36,26 @@ STORY_SCHEMA = {
             },
         },
     },
-    "required": ["title", "description", "tags", "summary", "characters", "scenes"],
+    "required": ["hook", "title_options", "thumb_text", "description", "tags", "summary", "characters", "scenes"],
     "additionalProperties": False,
 }
 
 SYSTEM = """Sen viral YouTube Shorts için kısa animasyon hikayeleri yazan bir senaristsin.
 Kurallar:
-- İlk cümle izleyiciyi ilk 2 saniyede yakalayan güçlü bir kanca olmalı (soru, şok edici durum veya gizem).
+- KANCA (ilk cümle) videonun tamamıdır. İlk cümle: başlığın verdiği sözü doğrular, izleyicinin kapatamayacağı bir soru açar
+  ve somut bir ayrıntı taşır (saat, sayı, isim, yer). En fazla 18 kelime. Önce 3 kanca düşün, en güçlüsünü "hook" alanına yaz;
+  1. sahnenin anlatımı bu cümleyle başlasın. "Bir varmış bir yokmuş", "merhaba", "bugün size" ile BAŞLAMA.
+- Kanal tanıtımı, "abone ol" çağrısı yok. Sona en fazla TEK bir çağrı koyabilirsin (ör. "Sence ne oldu? Yorumlara yaz.").
 - Hikayenin net bir başı, gerilimi ve akılda kalan / ters köşe bir sonu olsun.
 - Anlatım akıcı, sade, konuşma diline yakın olsun; seslendirmede doğal dursun.
 - Şiddet, korku ve içerik aile dostu kalsın; telif hakkı olan karakterler, markalar, gerçek kişiler KULLANMA.
 - Görsel tarifler İngilizce, anlatım istenen dilde olsun.
-- Her image_prompt kendi başına anlaşılır olsun (karakterin adını değil görünüşünü yaz)."""
+- Her image_prompt kendi başına anlaşılır olsun (karakterin adını değil görünüşünü yaz).
+BAŞLIK VE KAPAK (title_options, thumb_text):
+- Başlık ve kapak yazısı TEK bir paket: farklı kelimelerle aynı merakı versinler; kapak başlığı tekrar etmesin.
+- Başlık en fazla 40 karakter (telefonda kesilmesin); sayı, saat ya da isim her sıfattan iyidir.
+- En fazla 2 tamamen BÜYÜK HARFLİ kelime; "inanılmaz", "efsane", "şok" gibi şişirme kelimeler yok; en fazla 1 emoji.
+- Kapak yazısı 2-3 kelime; hikayedeki en vurucu ifade ya da an (ör. "BENİ UNUTMA", "GECE 3'TE")."""
 
 
 def generate_story(cfg: dict, history: list[dict]) -> dict:
@@ -84,6 +97,11 @@ Başlığın sonuna #shorts ekleme, onu sistem ekleyecek."""
 
     text = next(b.text for b in response.content if b.type == "text")
     story = json.loads(text)
+    from src.packaging import choose_title
+    story["title"], story["title_score"], story["title_issues"] = choose_title(story["title_options"], story.get("thumb_text", ""))
+    hook = story.get("hook", "").strip()
+    if hook and story["scenes"] and not story["scenes"][0]["narration"].strip().startswith(hook[:20]):
+        story["scenes"][0]["narration"] = f"{hook} {story['scenes'][0]['narration']}".strip()
     story["theme"] = theme
     story["art_style"] = random.choice(cfg["art_styles"])
     if not story["scenes"]:

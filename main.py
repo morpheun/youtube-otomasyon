@@ -44,10 +44,17 @@ def main():
     if args.story:
         story = load_json(args.story, None)
         story.setdefault("art_style", random.choice(cfg["art_styles"]))
+        if "title" not in story and story.get("title_options"):
+            from src.packaging import choose_title
+            story["title"], story["title_score"], story["title_issues"] = choose_title(story["title_options"], story.get("thumb_text", ""))
     else:
         print("1/4 Senaryo yazılıyor (Claude)...")
         story = story_mod.generate_story(cfg, history)
     print(f"   Başlık: {story['title']}  ({len(story['scenes'])} sahne)")
+    if story.get("title_score") is not None:
+        print(f"   Başlık puanı: {story['title_score']}/100  {'; '.join(story.get('title_issues') or ['sorun yok'])}")
+    if story.get("thumb_text"):
+        print(f"   Kapak yazısı: {story['thumb_text']}")
     with open(os.path.join(out_dir, f"{stamp}.json"), "w", encoding="utf-8") as f:
         json.dump(story, f, ensure_ascii=False, indent=2)
 
@@ -64,7 +71,7 @@ def main():
     # 4) Montaj
     print("4/4 Video birleştiriliyor (ffmpeg)...")
     video = os.path.join(out_dir, f"{stamp}.mp4")
-    total = render.render(scenes, work, video, cfg, os.path.join(ROOT, "assets", "music"))
+    total = render.render(scenes, work, video, cfg, os.path.join(ROOT, "assets", "music"), story.get("thumb_text"))
     print(f"   Hazır: {video}  ({total:.1f} sn)")
     if total > 180:
         raise RuntimeError("Video 3 dakikadan uzun; Shorts sayılmaz.")

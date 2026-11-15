@@ -53,7 +53,7 @@ def tr_upper(s: str) -> str:
     return s.replace("i", "İ").replace("ı", "I").upper()
 
 
-def write_ass(scene_words: list[list[dict]], path: str, cfg: dict) -> None:
+def write_ass(scene_words: list[list[dict]], path: str, cfg: dict, hook_text: str | None = None) -> None:
     """Kelime gruplarını büyük, ortalı, kontur çizgili altyazı olarak yazar; o an okunan kelime sarı.
     Gruplar sahne sınırını aşmaz."""
     n = cfg["subtitle_words_per_line"]
@@ -71,6 +71,10 @@ def write_ass(scene_words: list[list[dict]], path: str, cfg: dict) -> None:
                 parts.append(r"{\c&H00E5FF&}" + t + r"{\c&HFFFFFF&}" if k == wi else t)
             lines.append(f"Dialogue: 0,{_ass_time(start)},{_ass_time(end)},Sub,,0,0,0,,{' '.join(parts)}")
 
+    if hook_text:  # kapak yazısı: ilk 2,5 saniye üstte büyük sarı yazı (yt-shorts: "ilk iki saniyenin ekran yazısı")
+        t = tr_upper(hook_text.strip()).replace("{", "(").replace("}", ")")
+        lines.insert(0, f"Dialogue: 1,{_ass_time(0)},{_ass_time(2.6)},Hook,,0,0,0,," + r"{\fad(120,300)}" + t)
+
     header = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {cfg['width']}
@@ -80,6 +84,7 @@ WrapStyle: 0
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Sub,{cfg['subtitle_font']},84,&H00FFFFFF,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,7,3,2,70,70,560,1
+Style: Hook,{cfg['subtitle_font']},118,&H004EC1F2,&H004EC1F2,&H00000000,&H90000000,-1,0,0,0,100,100,2,0,1,9,4,8,60,60,250,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -88,7 +93,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         f.write(header + "\n".join(lines) + "\n")
 
 
-def render(scenes: list[dict], workdir: str, out_path: str, cfg: dict, music_dir: str) -> float:
+def render(scenes: list[dict], workdir: str, out_path: str, cfg: dict, music_dir: str, hook_text: str | None = None) -> float:
     """scenes: [{image, audio, duration, words}] -> out_path. Toplam süreyi döndürür."""
     fps = cfg["fps"]
     kinds = ["zoom_in", "pan_right", "zoom_out", "pan_up", "pan_left"]
@@ -115,7 +120,7 @@ def render(scenes: list[dict], workdir: str, out_path: str, cfg: dict, music_dir
         f.writelines(f"file '{c}'\n" for c in clip_list)
     with open(os.path.join(workdir, "voices.txt"), "w") as f:
         f.writelines(f"file '{a}'\n" for a in audio_list)
-    write_ass(scene_words, os.path.join(workdir, "subs.ass"), cfg)
+    write_ass(scene_words, os.path.join(workdir, "subs.ass"), cfg, hook_text)
 
     fonts_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "fonts"))
     sub_filter = f"subtitles=subs.ass:fontsdir='{fonts_dir}'" if os.path.isdir(fonts_dir) else "subtitles=subs.ass"
